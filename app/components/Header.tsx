@@ -25,17 +25,51 @@ export function Header({
 }: HeaderProps) {
   const {shop, menu} = header;
   return (
-    <header className="header">
-      <NavLink prefetch="intent" to="/" style={activeLinkStyle} end>
-        <strong>{shop.name}</strong>
-      </NavLink>
-      <HeaderMenu
-        menu={menu}
-        viewport="desktop"
-        primaryDomainUrl={header.shop.primaryDomain.url}
-        publicStoreDomain={publicStoreDomain}
-      />
-      <HeaderCtas isLoggedIn={isLoggedIn} cart={cart} />
+    <header className="hbx-header">
+      <div className="header-container">
+        {/* Left Side - Hamburger Menu + Navigation */}
+        <div className="header-left">
+          <HeaderMenuMobileToggle />
+          <div className="header-nav-links">
+            <NavLink
+              to="/collections/men"
+              className="nav-link"
+              style={activeLinkStyle}
+            >
+              MEN
+            </NavLink>
+            <NavLink
+              to="/collections/women"
+              className="nav-link"
+              style={activeLinkStyle}
+            >
+              WOMEN
+            </NavLink>
+          </div>
+        </div>
+
+        {/* Center - Logo */}
+        <div className="header-center">
+          <NavLink prefetch="intent" to="/" className="logo-link" end>
+            <div className="logo">HBX</div>
+          </NavLink>
+        </div>
+
+        {/* Right Side - Icons */}
+        <div className="header-right">
+          <SearchToggle />
+          <div className="currency-selector">USD</div>
+          <div className="language-selector">EN</div>
+          <NavLink prefetch="intent" to="/account" className="account-link">
+            <Suspense fallback="👤">
+              <Await resolve={isLoggedIn} errorElement="👤">
+                {(isLoggedIn) => (isLoggedIn ? '👤' : '👤')}
+              </Await>
+            </Suspense>
+          </NavLink>
+          <CartToggle cart={cart} />
+        </div>
+      </div>
     </header>
   );
 }
@@ -95,34 +129,13 @@ export function HeaderMenu({
   );
 }
 
-function HeaderCtas({
-  isLoggedIn,
-  cart,
-}: Pick<HeaderProps, 'isLoggedIn' | 'cart'>) {
-  return (
-    <nav className="header-ctas" role="navigation">
-      <HeaderMenuMobileToggle />
-      <NavLink prefetch="intent" to="/account" style={activeLinkStyle}>
-        <Suspense fallback="Sign in">
-          <Await resolve={isLoggedIn} errorElement="Sign in">
-            {(isLoggedIn) => (isLoggedIn ? 'Account' : 'Sign in')}
-          </Await>
-        </Suspense>
-      </NavLink>
-      <SearchToggle />
-      <CartToggle cart={cart} />
-    </nav>
-  );
-}
-
 function HeaderMenuMobileToggle() {
   const {open} = useAside();
   return (
-    <button
-      className="header-menu-mobile-toggle reset"
-      onClick={() => open('mobile')}
-    >
-      <h3>☰</h3>
+    <button className="hamburger-menu" onClick={() => open('mobile')}>
+      <span className="hamburger-line"></span>
+      <span className="hamburger-line"></span>
+      <span className="hamburger-line"></span>
     </button>
   );
 }
@@ -130,8 +143,8 @@ function HeaderMenuMobileToggle() {
 function SearchToggle() {
   const {open} = useAside();
   return (
-    <button className="reset" onClick={() => open('search')}>
-      Search
+    <button className="search-toggle" onClick={() => open('search')}>
+      🔍
     </button>
   );
 }
@@ -141,8 +154,8 @@ function CartBadge({count}: {count: number | null}) {
   const {publish, shop, cart, prevCart} = useAnalytics();
 
   return (
-    <a
-      href="/cart"
+    <button
+      className="cart-toggle"
       onClick={(e) => {
         e.preventDefault();
         open('cart');
@@ -154,8 +167,11 @@ function CartBadge({count}: {count: number | null}) {
         } as CartViewPayload);
       }}
     >
-      Cart {count === null ? <span>&nbsp;</span> : count}
-    </a>
+      🛒{' '}
+      {count !== null && count > 0 && (
+        <span className="cart-count">{count}</span>
+      )}
+    </button>
   );
 }
 

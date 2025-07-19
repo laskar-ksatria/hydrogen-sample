@@ -60,8 +60,52 @@ export default function Homepage() {
   const data = useLoaderData<typeof loader>();
   return (
     <div className="home">
-      <FeaturedCollection collection={data.featuredCollection} />
-      <RecommendedProducts products={data.recommendedProducts} />
+      {/* Promotional Banner */}
+      <div className="promo-banner">
+        <div className="promo-content">
+          <span>
+            End of Season Sale is now live! Up to 70% off on new styles. T&Cs
+            Apply.
+          </span>
+          <Link to="/collections/sale" className="promo-link">
+            See More
+          </Link>
+        </div>
+      </div>
+
+      {/* Hero Split Layout */}
+      <div className="hero-split">
+        <Link to="/collections/men" className="hero-section hero-men">
+          <div className="hero-image">
+            <img
+              src="https://images.unsplash.com/photo-1516257984-b1b4d707412e?w=800&h=1000&fit=crop&crop=center"
+              alt="Men's Collection"
+              className="hero-img"
+            />
+          </div>
+          <div className="hero-overlay">
+            <h1 className="hero-title">Men</h1>
+          </div>
+        </Link>
+
+        <Link to="/collections/women" className="hero-section hero-women">
+          <div className="hero-image">
+            <img
+              src="https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?w=800&h=1000&fit=crop&crop=center"
+              alt="Women's Collection"
+              className="hero-img"
+            />
+          </div>
+          <div className="hero-overlay">
+            <h1 className="hero-title">Women</h1>
+          </div>
+        </Link>
+      </div>
+
+      {/* Featured Products */}
+      <div className="featured-section">
+        <RecommendedProducts products={data.recommendedProducts} />
+      </div>
     </div>
   );
 }
@@ -95,7 +139,7 @@ function RecommendedProducts({
 }) {
   return (
     <div className="recommended-products">
-      <h2>Recommended Products</h2>
+      <h2>Featured Products</h2>
       <Suspense fallback={<div>Loading...</div>}>
         <Await resolve={products}>
           {(response) => (
