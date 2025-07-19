@@ -9,7 +9,7 @@ import type {
 import {ProductItem} from '~/components/ProductItem';
 
 export const meta: MetaFunction = () => {
-  return [{title: 'Hydrogen | Home'}];
+  return [{title: 'HBX | Home'}];
 };
 
 export async function loader(args: LoaderFunctionArgs) {
@@ -58,6 +58,7 @@ function loadDeferredData({context}: LoaderFunctionArgs) {
 
 export default function Homepage() {
   const data = useLoaderData<typeof loader>();
+
   return (
     <div className="home">
       {/* Promotional Banner */}
@@ -78,7 +79,7 @@ export default function Homepage() {
         <Link to="/collections/men" className="hero-section hero-men">
           <div className="hero-image">
             <img
-              src="https://images.unsplash.com/photo-1516257984-b1b4d707412e?w=800&h=1000&fit=crop&crop=center"
+              src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=800&h=1000&fit=crop&crop=center"
               alt="Men's Collection"
               className="hero-img"
             />
@@ -102,62 +103,232 @@ export default function Homepage() {
         </Link>
       </div>
 
+      {/* New Arrivals Section */}
+      <NewArrivalsSection />
+
       {/* Featured Products */}
       <div className="featured-section">
         <RecommendedProducts products={data.recommendedProducts} />
-
-        {/* View All Products Section */}
-        <div className="view-all-section">
-          <div className="view-all-grid">
-            <Link to="/collections/men" className="view-all-card men-card">
-              <div className="view-all-content">
-                <h3>Shop Men&apos;s</h3>
-                <p>Discover the latest in men&apos;s fashion</p>
-                <span className="view-all-arrow">→</span>
-              </div>
-            </Link>
-
-            <Link to="/collections/women" className="view-all-card women-card">
-              <div className="view-all-content">
-                <h3>Shop Women&apos;s</h3>
-                <p>Explore our women&apos;s collection</p>
-                <span className="view-all-arrow">→</span>
-              </div>
-            </Link>
-
-            <Link to="/collections" className="view-all-card all-card">
-              <div className="view-all-content">
-                <h3>View All</h3>
-                <p>Browse our complete collection</p>
-                <span className="view-all-arrow">→</span>
-              </div>
-            </Link>
-          </div>
-        </div>
       </div>
+
+      {/* Brand Spotlight */}
+      <BrandSpotlight />
+
+      {/* Category Grid */}
+      <CategoryGrid />
+
+      {/* Featured Collections */}
+      <FeaturedCollections />
     </div>
   );
 }
 
-function FeaturedCollection({
-  collection,
-}: {
-  collection: FeaturedCollectionFragment;
-}) {
-  if (!collection) return null;
-  const image = collection?.image;
+function NewArrivalsSection() {
+  const newArrivals = [
+    {
+      id: 1,
+      title: 'Stone Island Compass Logo Sweatshirt',
+      brand: 'Stone Island',
+      price: 'IDR 4,200,000',
+      image:
+        'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=400&h=400&fit=crop&crop=center',
+      isNew: true,
+    },
+    {
+      id: 2,
+      title: 'Rick Owens DRKSHDW Sneakers',
+      brand: 'Rick Owens',
+      price: 'IDR 8,500,000',
+      image:
+        'https://images.unsplash.com/photo-1549298916-b41d501d3772?w=400&h=400&fit=crop&crop=center',
+      isNew: true,
+    },
+    {
+      id: 3,
+      title: 'Maison Margiela Tabi Boots',
+      brand: 'Maison Margiela',
+      price: 'IDR 12,000,000',
+      image:
+        'https://images.unsplash.com/photo-1544966503-7cc5ac882d5f?w=400&h=400&fit=crop&crop=center',
+      isNew: true,
+    },
+    {
+      id: 4,
+      title: 'Acne Studios Face Hoodie',
+      brand: 'Acne Studios',
+      price: 'IDR 6,800,000',
+      image:
+        'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=400&h=400&fit=crop&crop=center',
+      isNew: true,
+    },
+  ];
+
   return (
-    <Link
-      className="featured-collection"
-      to={`/collections/${collection.handle}`}
-    >
-      {image && (
-        <div className="featured-collection-image">
-          <Image data={image} sizes="100vw" />
+    <section className="new-arrivals-section">
+      <div className="section-container">
+        <div className="section-header">
+          <h2>New Arrivals</h2>
+          <Link to="/collections/new" className="view-all-link">
+            View All
+          </Link>
         </div>
-      )}
-      <h1>{collection.title}</h1>
-    </Link>
+        <div className="new-arrivals-grid">
+          {newArrivals.map((product) => (
+            <div key={product.id} className="hbx-product-card">
+              <Link
+                to={`/products/${product.title.toLowerCase().replace(/\s+/g, '-')}`}
+                className="product-card-link"
+              >
+                <div className="product-image-wrapper">
+                  <img
+                    src={product.image}
+                    alt={product.title}
+                    className="product-image-hbx"
+                  />
+                  {product.isNew && <span className="new-badge">NEW</span>}
+                  <div className="product-hover-overlay">
+                    <button className="add-to-cart-btn">Add to Cart</button>
+                  </div>
+                </div>
+                <div className="product-details">
+                  <div className="product-brand">{product.brand}</div>
+                  <h3 className="product-name">{product.title}</h3>
+                  <div className="product-price-hbx">{product.price}</div>
+                </div>
+              </Link>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function BrandSpotlight() {
+  const brands = [
+    {
+      name: 'Stone Island',
+      image:
+        'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=300&h=200&fit=crop',
+    },
+    {
+      name: 'Rick Owens',
+      image:
+        'https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?w=300&h=200&fit=crop',
+    },
+    {
+      name: 'Maison Margiela',
+      image:
+        'https://images.unsplash.com/photo-1544966503-7cc5ac882d5f?w=300&h=200&fit=crop',
+    },
+    {
+      name: 'Acne Studios',
+      image:
+        'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=300&h=200&fit=crop',
+    },
+  ];
+
+  return (
+    <section className="brand-spotlight">
+      <div className="section-container">
+        <h2>Featured Brands</h2>
+        <div className="brands-grid">
+          {brands.map((brand, index) => (
+            <Link
+              key={index}
+              to={`/brands/${brand.name.toLowerCase().replace(/\s+/g, '-')}`}
+              className="brand-card"
+            >
+              <img src={brand.image} alt={brand.name} />
+              <div className="brand-overlay">
+                <h3>{brand.name}</h3>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function CategoryGrid() {
+  const categories = [
+    {
+      name: 'Hoodies',
+      count: '148 items',
+      image:
+        'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=300&h=400&fit=crop',
+    },
+    {
+      name: 'Sneakers',
+      count: '89 items',
+      image:
+        'https://images.unsplash.com/photo-1549298916-b41d501d3772?w=300&h=400&fit=crop',
+    },
+    {
+      name: 'Jackets',
+      count: '203 items',
+      image:
+        'https://images.unsplash.com/photo-1544966503-7cc5ac882d5f?w=300&h=400&fit=crop',
+    },
+    {
+      name: 'Accessories',
+      count: '67 items',
+      image:
+        'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=300&h=400&fit=crop',
+    },
+  ];
+
+  return (
+    <section className="category-grid-section">
+      <div className="section-container">
+        <h2>Shop by Category</h2>
+        <div className="category-grid">
+          {categories.map((category, index) => (
+            <Link
+              key={index}
+              to={`/collections/${category.name.toLowerCase()}`}
+              className="category-card"
+            >
+              <img src={category.image} alt={category.name} />
+              <div className="category-info">
+                <h3>{category.name}</h3>
+                <p>{category.count}</p>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function FeaturedCollections() {
+  return (
+    <section className="featured-collections">
+      <div className="section-container">
+        <div className="collections-grid">
+          <Link
+            to="/collections/sale"
+            className="collection-banner sale-banner"
+          >
+            <div className="collection-content">
+              <h2>End of Season Sale</h2>
+              <p>Up to 70% off selected items</p>
+              <span className="shop-now-btn">Shop Now →</span>
+            </div>
+          </Link>
+
+          <Link to="/collections/new" className="collection-banner new-banner">
+            <div className="collection-content">
+              <h2>New Arrivals</h2>
+              <p>Fresh drops from top brands</p>
+              <span className="shop-now-btn">Discover →</span>
+            </div>
+          </Link>
+        </div>
+      </div>
+    </section>
   );
 }
 
@@ -182,7 +353,6 @@ function RecommendedProducts({
           )}
         </Await>
       </Suspense>
-      <br />
     </div>
   );
 }
