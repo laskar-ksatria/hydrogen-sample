@@ -105,6 +105,35 @@ export default function Homepage() {
       {/* Featured Products */}
       <div className="featured-section">
         <RecommendedProducts products={data.recommendedProducts} />
+
+        {/* View All Products Section */}
+        <div className="view-all-section">
+          <div className="view-all-grid">
+            <Link to="/collections/men" className="view-all-card men-card">
+              <div className="view-all-content">
+                <h3>Shop Men&apos;s</h3>
+                <p>Discover the latest in men&apos;s fashion</p>
+                <span className="view-all-arrow">→</span>
+              </div>
+            </Link>
+
+            <Link to="/collections/women" className="view-all-card women-card">
+              <div className="view-all-content">
+                <h3>Shop Women&apos;s</h3>
+                <p>Explore our women&apos;s collection</p>
+                <span className="view-all-arrow">→</span>
+              </div>
+            </Link>
+
+            <Link to="/collections" className="view-all-card all-card">
+              <div className="view-all-content">
+                <h3>View All</h3>
+                <p>Browse our complete collection</p>
+                <span className="view-all-arrow">→</span>
+              </div>
+            </Link>
+          </div>
+        </div>
       </div>
     </div>
   );
