@@ -33,7 +33,7 @@ function BannerSection({title, imageUrl, href, position}: BannerSectionProps) {
 
 export function SectionBanner() {
   return (
-    <section className="w-full h-[80vh] md:h-[70vh] lg:h-[90vh] min-h-[600px] md:min-h-[500px]">
+    <section className="w-full font-mono h-[80vh] md:h-[70vh] lg:h-[90vh] min-h-[600px] md:min-h-[500px]">
       <div className="flex flex-col md:flex-row h-full">
         <BannerSection
           title="Men"

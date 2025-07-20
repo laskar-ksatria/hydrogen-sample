@@ -9,6 +9,9 @@ import type {
 import {ProductItem} from '~/components/ProductItem';
 import {SectionBanner} from '~/components/SectionBanner';
 import {ProductCarousel} from '~/components/ProductCarousel';
+import {BrandSection} from '~/components/BrandSection';
+import {RowSection} from '~/components/RowSection';
+import {BlogList} from '~/components/BlogList';
 
 export const meta: MetaFunction = () => {
   return [{title: 'Hydrogen | Home'}];
@@ -63,7 +66,15 @@ export default function Homepage() {
   return (
     <div className="home">
       <SectionBanner />
-      <ProductCarousel />
+      <ProductCarousel useContainer={true} />
+      <ProductCarousel useContainer={true} />
+      <BrandSection />
+      <BlogList useContainer={true} />
+      <div className="py-6">
+        {/* <RowSection position="left" /> */}
+        {/* <RowSection position="right" /> */}
+        {/* <RowSection position="left" /> */}
+      </div>
     </div>
   );
 }

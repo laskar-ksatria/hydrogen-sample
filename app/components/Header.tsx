@@ -1,4 +1,4 @@
-import {Suspense} from 'react';
+import {Suspense, useState, useEffect} from 'react';
 import {Await, NavLink, useAsyncValue} from 'react-router';
 import {
   type CartViewPayload,
@@ -24,10 +24,25 @@ export function Header({
   publicStoreDomain,
 }: HeaderProps) {
   const {shop, menu} = header;
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop = window.scrollY;
+      // if (scrollTop > 10) alert('scrolled');
+      setIsScrolled(scrollTop > 10);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
-    <header className="header sticky top-0 z-50 py-2 bg-white header-shadow">
-      <div className="container w-full flex justify-between items-center">
-        <div className="flex items-center">
+    <>
+      <header
+        className={`w-full font-mono ${isScrolled ? 'fixed left-0 top-0' : ''} container flex justify-between z-20 py-4 bg-white/95 backdrop-blur-sm header-shadow border-b border-gray-100 transition-all duration-500 ease-in-out`}
+      >
+        <div className="flex items-center justify-between">
           <NavLink
             prefetch="intent"
             to="/"
@@ -35,7 +50,7 @@ export function Header({
             end
             className="text-xl"
           >
-            <strong>LOGO</strong>
+            <strong>PATAGONIA</strong>
           </NavLink>
           <HeaderMenu
             menu={menu}
@@ -45,8 +60,15 @@ export function Header({
           />
         </div>
         {/* <HeaderCtas isLoggedIn={isLoggedIn} cart={cart} /> */}
-      </div>
-    </header>
+      </header>
+      {/* Spacer to prevent content jump when header becomes fixed */}
+      {isScrolled && (
+        <div
+          className="w-full transition-all duration-300 ease-in-out"
+          style={{height: 'var(--header-height)'}}
+        />
+      )}
+    </>
   );
 }
 

@@ -5,6 +5,7 @@ import {Navigation} from 'swiper/modules';
 // Import swiper styles - if these don't work, we'll use fallback
 import 'swiper/css';
 import 'swiper/css/navigation';
+import {Link} from 'react-router';
 
 interface Product {
   id: string;
@@ -80,22 +81,24 @@ const dummyProducts: Product[] = [
 
 function ProductCard({product}: {product: Product}) {
   return (
-    <div className="w-[276px] cursor-pointer">
+    <div className="w-[220px] sm:w-[240px] md:w-[260px] lg:w-[276px] cursor-pointer">
       {/* Product Image Placeholder */}
-      <div className="h-[358px] bg-zinc-200 mb-4 overflow-hidden">
+      <div className="h-[280px] sm:h-[300px] md:h-[330px] lg:h-[358px] bg-zinc-200 mb-4 overflow-hidden">
         <div className="w-full h-full bg-zinc-200"></div>
       </div>
 
       {/* Product Info */}
-      <div className="space-y-2">
-        <div className="font-bold text-sm uppercase tracking-wide text-gray-900">
+      <div className="space-y-1 sm:space-y-2">
+        <div className="font-bold text-xs sm:text-sm uppercase tracking-wide text-gray-900">
           {product.brand}
         </div>
-        <div className="text-sm text-gray-700 leading-tight">
+        <div className="text-xs sm:text-sm text-gray-700 leading-tight">
           {product.name}
         </div>
-        <div className="flex items-center gap-2">
-          <span className="font-semibold text-gray-900">{product.price}</span>
+        <div className="flex items-center gap-1 sm:gap-2">
+          <span className="font-semibold text-xs sm:text-base text-gray-900">
+            {product.price}
+          </span>
           {product.isNew && <span className="text-xs text-gray-500">New</span>}
         </div>
       </div>
@@ -129,20 +132,21 @@ export function ProductCarousel({
 }: ProductCarouselProps & {useContainer?: boolean}) {
   return (
     <section
-      className={`py-12 ${useContainer ? '' : 'pl-2 pr-4 md:pl-1 md:pr-2 lg:pl-8 lg:pr-2'}`}
+      className={`md:pt-12 pt-8 md:pb-8 pb-2 ${useContainer ? '' : 'pl-2 pr-4 md:pl-1 md:pr-2 lg:pl-8 lg:pr-2'}`}
     >
       <CarouselContainer useContainer={useContainer}>
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <h2 className="text-3xl font-bold text-gray-900">{title}</h2>
-          <div className="flex gap-2">
-            <button className="swiper-button-prev-custom p-2 rounded-full bg-white border border-gray-200 hover:bg-gray-50 transition-colors">
+        <div className="flex font-mono items-center justify-between mb-8">
+          <h2 className="text-2xl font-bold text-gray-900">{title}</h2>
+          <Link to="/" className="underline cursor-pointer hover:no-underline">
+            View All
+          </Link>
+          {/* <button className="swiper-button-prev-custom p-2 rounded-full bg-white border border-gray-200 hover:bg-gray-50 transition-colors">
               <IoChevronBack className="w-5 h-5 text-gray-600" />
             </button>
             <button className="swiper-button-next-custom p-2 rounded-full bg-white border border-gray-200 hover:bg-gray-50 transition-colors">
               <IoChevronForward className="w-5 h-5 text-gray-600" />
-            </button>
-          </div>
+            </button> */}
         </div>
 
         {/* Products Swiper */}
@@ -192,8 +196,8 @@ export function ProductCarousel({
             {products.map((product) => (
               <SwiperSlide
                 key={product.id}
+                className="!w-[220px] sm:!w-[240px] md:!w-[260px] lg:!w-[276px]"
                 style={{
-                  width: '276px',
                   flexShrink: 0,
                 }}
               >

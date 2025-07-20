@@ -63,11 +63,11 @@ img {
   }
 }
 
-@media (min-width: 1280px) {
+/* @media (min-width: 1280px) {
   .container {
     max-width: 1140px;
   }
-}
+} */
 
 /*
 * --------------------------------------------------
@@ -226,7 +226,7 @@ button.reset:hover:not(:has(> *)) {
   height: var(--header-height);
   position: sticky;
   top: 0;
-  z-index: 1;
+  z-index: 100;
 }
 
 .header-menu-mobile-toggle {
@@ -574,4 +574,28 @@ button.reset:hover:not(:has(> *)) {
 
 .account-logout {
   display: inline-block;
+}
+
+/*
+* --------------------------------------------------
+* Marquee animation for HalloBar
+* --------------------------------------------------
+*/
+.hallo-marquee-container {
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.hallo-marquee-content {
+  display: inline-block;
+  animation: hallo-marquee 15s linear infinite;
+}
+
+@keyframes hallo-marquee {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
 }

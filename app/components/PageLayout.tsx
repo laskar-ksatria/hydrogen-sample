@@ -48,7 +48,7 @@ export function PageLayout({
         />
       )}
       <main>{children}</main>
-      <div className="h-96"></div>
+      <div className="h-52"></div>
       {/* <Footer
         footer={footer}
         header={header}
