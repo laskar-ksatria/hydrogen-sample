@@ -25,17 +25,27 @@ export function Header({
 }: HeaderProps) {
   const {shop, menu} = header;
   return (
-    <header className="header">
-      <NavLink prefetch="intent" to="/" style={activeLinkStyle} end>
-        <strong>{shop.name}</strong>
-      </NavLink>
-      <HeaderMenu
-        menu={menu}
-        viewport="desktop"
-        primaryDomainUrl={header.shop.primaryDomain.url}
-        publicStoreDomain={publicStoreDomain}
-      />
-      <HeaderCtas isLoggedIn={isLoggedIn} cart={cart} />
+    <header className="header sticky top-0 z-50 py-2 bg-white header-shadow">
+      <div className="container w-full flex justify-between items-center">
+        <div className="flex items-center">
+          <NavLink
+            prefetch="intent"
+            to="/"
+            style={activeLinkStyle}
+            end
+            className="text-xl"
+          >
+            <strong>LOGO</strong>
+          </NavLink>
+          <HeaderMenu
+            menu={menu}
+            viewport="desktop"
+            primaryDomainUrl={header.shop.primaryDomain.url}
+            publicStoreDomain={publicStoreDomain}
+          />
+        </div>
+        {/* <HeaderCtas isLoggedIn={isLoggedIn} cart={cart} /> */}
+      </div>
     </header>
   );
 }
@@ -225,7 +235,7 @@ function activeLinkStyle({
   isPending: boolean;
 }) {
   return {
-    fontWeight: isActive ? 'bold' : undefined,
+    fontWeight: isActive ? 'semibold' : undefined,
     color: isPending ? 'grey' : 'black',
   };
 }

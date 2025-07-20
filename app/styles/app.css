@@ -3,13 +3,70 @@
   --cart-aside-summary-height-with-discount: 300px;
   --cart-aside-summary-height: 250px;
   --grid-item-width: 355px;
-  --header-height: 64px;
+  --header-height: 57px;
   --color-dark: #000;
   --color-light: #fff;
 }
 
+html,
+body {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+* {
+  max-width: 100%;
+}
+
+.home {
+  overflow-x: hidden;
+  width: 100%;
+}
+
+section {
+  overflow-x: hidden;
+}
+
 img {
   border-radius: 4px;
+}
+
+/*
+* --------------------------------------------------
+* Custom Container Class
+* --------------------------------------------------
+*/
+.container {
+  @apply w-full;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+
+@media (min-width: 640px) {
+  .container {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .container {
+    max-width: 1140px;
+  }
 }
 
 /*
@@ -167,7 +224,6 @@ button.reset:hover:not(:has(> *)) {
   background: #fff;
   display: flex;
   height: var(--header-height);
-  padding: 0 1rem;
   position: sticky;
   top: 0;
   z-index: 1;
@@ -209,7 +265,6 @@ button.reset:hover:not(:has(> *)) {
 .header-ctas > * {
   min-width: fit-content;
 }
-
 
 /*
 * --------------------------------------------------

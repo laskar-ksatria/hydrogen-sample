@@ -14,6 +14,7 @@ import {
   SearchFormPredictive,
 } from '~/components/SearchFormPredictive';
 import {SearchResultsPredictive} from '~/components/SearchResultsPredictive';
+import HalloBar from './HalloBar';
 
 interface PageLayoutProps {
   cart: Promise<CartApiQueryFragment | null>;
@@ -37,6 +38,7 @@ export function PageLayout({
       <CartAside cart={cart} />
       <SearchAside />
       <MobileMenuAside header={header} publicStoreDomain={publicStoreDomain} />
+      <HalloBar />
       {header && (
         <Header
           header={header}
@@ -46,11 +48,12 @@ export function PageLayout({
         />
       )}
       <main>{children}</main>
-      <Footer
+      <div className="h-96"></div>
+      {/* <Footer
         footer={footer}
         header={header}
         publicStoreDomain={publicStoreDomain}
-      />
+      /> */}
     </Aside.Provider>
   );
 }
@@ -68,6 +71,9 @@ function CartAside({cart}: {cart: PageLayoutProps['cart']}) {
     </Aside>
   );
 }
+
+// create styling for home page like on this website @https://hbx.com/
+// Using tailwind css
 
 function SearchAside() {
   const queriesDatalistId = useId();
