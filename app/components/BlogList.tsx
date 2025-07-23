@@ -5,6 +5,7 @@ import {Navigation} from 'swiper/modules';
 // Import swiper styles
 import 'swiper/css';
 import 'swiper/css/navigation';
+import {Link} from 'react-router';
 
 // Dummy blog data
 const dummyBlogs = [
@@ -129,37 +130,26 @@ export function BlogList({
 }: BlogListProps) {
   return (
     <section
-      className={`md:pt-12 pt-8 md:pb-8 pb-2 ${useContainer ? '' : 'pl-2 pr-4 md:pl-1 md:pr-2 lg:pl-8 lg:pr-2'}`}
+      className={`md:pt-12 pt-8 md:pb-8 pb-2 ${useContainer ? '' : 'pl-2 md:pl-1 lg:pl-8'}`}
     >
       <CarouselContainer useContainer={useContainer}>
         {/* Header */}
-        <div className="flex items-center font-mono justify-between mb-8">
+        <div className="flex items-center justify-between mb-8">
           <div>
             <h2 className="text-xl font-mono md:text-3xl font-semibold text-gray-900 mb-1">
               {title}
             </h2>
-            <p className="text-gray-600 text-base">
+            <p className="text-gray-600 text-base font-mono">
               Discover insights, trends, and stories from our world
             </p>
           </div>
-          <div className="flex gap-2">
-            <button className="swiper-button-prev-blog p-2 rounded-full bg-white border border-gray-200 hover:bg-gray-50 transition-colors">
-              <IoChevronBack className="w-5 h-5 text-gray-600" />
-            </button>
-            <button className="swiper-button-next-blog p-2 rounded-full bg-white border border-gray-200 hover:bg-gray-50 transition-colors">
-              <IoChevronForward className="w-5 h-5 text-gray-600" />
-            </button>
-          </div>
+          <Link to="/" className="underline cursor-pointer hover:no-underline">
+            View All
+          </Link>
         </div>
 
         {/* Blogs Swiper */}
-        <div
-          className={`relative ${
-            useContainer
-              ? '-mx-2 sm:-mx-2 md:-mx-4 lg:-mx-8 px-2 sm:px-2 md:px-4 lg:px-8'
-              : '-ml-2 -mr-4 pl-2 pr-4'
-          }`}
-        >
+        <div className={`relative ${useContainer ? '' : '-ml-2 pl-2'}`}>
           <Swiper
             modules={[Navigation]}
             spaceBetween={16}

@@ -10,8 +10,8 @@
 
 html,
 body {
-  overflow-x: hidden;
-  max-width: 100vw;
+  /* overflow-x: hidden; */
+  /* max-width: 100vw; */
 }
 
 * {
@@ -23,13 +23,13 @@ body {
   width: 100%;
 }
 
-section {
+/* section {
   overflow-x: hidden;
-}
+} */
 
-img {
+/* img {
   border-radius: 4px;
-}
+} */
 
 /*
 * --------------------------------------------------
@@ -246,7 +246,7 @@ button.reset:hover:not(:has(> *)) {
   grid-gap: 1rem;
   @media (min-width: 45em) {
     display: flex;
-    grid-gap: 1rem;
+    grid-gap: 2rem;
     margin-left: 3rem;
   }
 }
@@ -258,7 +258,7 @@ button.reset:hover:not(:has(> *)) {
 .header-ctas {
   align-items: center;
   display: flex;
-  grid-gap: 1rem;
+  grid-gap: 1.5rem;
   margin-left: auto;
 }
 
@@ -298,6 +298,7 @@ button.reset:hover:not(:has(> *)) {
   height: 100%;
   max-height: calc(100vh - var(--cart-aside-summary-height));
   overflow-y: auto;
+
   width: auto;
 }
 
@@ -512,17 +513,41 @@ button.reset:hover:not(:has(> *)) {
 }
 
 .product-options-grid {
-  display: flex;
-  flex-wrap: wrap;
-  grid-gap: 0.75rem;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
 }
 
 .product-options-item,
 .product-options-item:disabled {
-  padding: 0.25rem 0.5rem;
-  background-color: transparent;
-  font-size: 1rem;
+  padding: 1rem 0.75rem;
+  background-color: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
   font-family: inherit;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-height: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.product-options-item:hover {
+  border-color: #9ca3af;
+}
+
+.product-options-item:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Selected state */
+.product-options-item[style*='1px solid black'] {
+  border-color: #000 !important;
+  background-color: #f9fafb;
 }
 
 .product-option-label-swatch {
@@ -592,6 +617,56 @@ button.reset:hover:not(:has(> *)) {
 }
 
 @keyframes hallo-marquee {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+/*
+* --------------------------------------------------
+* Header marquee animation for desktop
+* --------------------------------------------------
+*/
+.header-marquee-container {
+  overflow: hidden;
+  white-space: nowrap;
+  padding: 8px 0;
+}
+
+.header-marquee-content {
+  display: inline-block;
+  animation: header-marquee 20s linear infinite;
+}
+
+@keyframes header-marquee {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+/*
+* --------------------------------------------------
+* Header marquee animation for desktop
+* --------------------------------------------------
+*/
+.header-marquee-container {
+  overflow: hidden;
+  white-space: nowrap;
+  padding: 8px 0;
+}
+
+.header-marquee-content {
+  display: inline-block;
+  animation: header-marquee 20s linear infinite;
+}
+
+@keyframes header-marquee {
   0% {
     transform: translateX(100%);
   }

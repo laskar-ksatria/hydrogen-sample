@@ -99,7 +99,7 @@ function ProductCard({product}: {product: Product}) {
           <span className="font-semibold text-xs sm:text-base text-gray-900">
             {product.price}
           </span>
-          {product.isNew && <span className="text-xs text-gray-500">New</span>}
+          {/* {product.isNew && <span className="text-xs text-gray-500">New</span>} */}
         </div>
       </div>
     </div>
@@ -132,11 +132,11 @@ export function ProductCarousel({
 }: ProductCarouselProps & {useContainer?: boolean}) {
   return (
     <section
-      className={`md:pt-12 pt-8 md:pb-8 pb-2 ${useContainer ? '' : 'pl-2 pr-4 md:pl-1 md:pr-2 lg:pl-8 lg:pr-2'}`}
+      className={`md:pt-12 pt-8 md:pb-8 pb-2 ${useContainer ? '' : 'pl-2 md:pl-1 lg:pl-8'}`}
     >
       <CarouselContainer useContainer={useContainer}>
         {/* Header */}
-        <div className="flex font-mono items-center justify-between mb-8">
+        <div className="flex font-mono items-center justify-between mb-4">
           <h2 className="text-2xl font-bold text-gray-900">{title}</h2>
           <Link to="/" className="underline cursor-pointer hover:no-underline">
             View All
@@ -150,13 +150,7 @@ export function ProductCarousel({
         </div>
 
         {/* Products Swiper */}
-        <div
-          className={`relative ${
-            useContainer
-              ? '-mx-2 sm:-mx-2 md:-mx-4 lg:-mx-8 px-2 sm:px-2 md:px-4 lg:px-8'
-              : '-ml-2 -mr-4 pl-2 pr-4'
-          }`}
-        >
+        <div className={`relative ${useContainer ? '' : '-ml-2 pl-2'}`}>
           <Swiper
             modules={[Navigation]}
             spaceBetween={12}
