@@ -1,4 +1,4 @@
-import {Await, Link} from 'react-router';
+import {Await, Link, useLocation} from 'react-router';
 import {Suspense, useId} from 'react';
 import type {
   CartApiQueryFragment,
@@ -14,6 +14,7 @@ import {
   SearchFormPredictive,
 } from '~/components/SearchFormPredictive';
 import {SearchResultsPredictive} from '~/components/SearchResultsPredictive';
+import HalloBar from './HalloBar';
 
 interface PageLayoutProps {
   cart: Promise<CartApiQueryFragment | null>;
@@ -32,12 +33,18 @@ export function PageLayout({
   isLoggedIn,
   publicStoreDomain,
 }: PageLayoutProps) {
+  const location = useLocation();
+  const isHomePage = location.pathname === '/';
+  const isLoginPage = location.pathname === '/account/login';
+  const isRegisterPage = location.pathname === '/account/register';
+
   return (
     <Aside.Provider>
       <CartAside cart={cart} />
       <SearchAside />
       <MobileMenuAside header={header} publicStoreDomain={publicStoreDomain} />
-      {header && (
+      {isHomePage && <HalloBar />}
+      {header && !isLoginPage && !isRegisterPage && (
         <Header
           header={header}
           cart={cart}
@@ -46,11 +53,12 @@ export function PageLayout({
         />
       )}
       <main>{children}</main>
-      <Footer
+      {/* <div className="h-52"></div> */}
+      {/* <Footer
         footer={footer}
         header={header}
         publicStoreDomain={publicStoreDomain}
-      />
+      /> */}
     </Aside.Provider>
   );
 }
@@ -68,6 +76,9 @@ function CartAside({cart}: {cart: PageLayoutProps['cart']}) {
     </Aside>
   );
 }
+
+// create styling for home page like on this website @https://hbx.com/
+// Using tailwind css
 
 function SearchAside() {
   const queriesDatalistId = useId();

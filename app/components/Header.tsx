@@ -1,4 +1,4 @@
-import {Suspense} from 'react';
+import {Suspense, useState, useEffect} from 'react';
 import {Await, NavLink, useAsyncValue} from 'react-router';
 import {
   type CartViewPayload,
@@ -7,6 +7,9 @@ import {
 } from '@shopify/hydrogen';
 import type {HeaderQuery, CartApiQueryFragment} from 'storefrontapi.generated';
 import {useAside} from '~/components/Aside';
+import {RiAccountCircleLine} from 'react-icons/ri';
+
+import {HiOutlineShoppingBag} from 'react-icons/hi2';
 
 interface HeaderProps {
   header: HeaderQuery;
@@ -24,19 +27,51 @@ export function Header({
   publicStoreDomain,
 }: HeaderProps) {
   const {shop, menu} = header;
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop = window.scrollY;
+      // if (scrollTop > 10) alert('scrolled');
+      setIsScrolled(scrollTop > 10);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
-    <header className="header">
-      <NavLink prefetch="intent" to="/" style={activeLinkStyle} end>
-        <strong>{shop.name}</strong>
-      </NavLink>
-      <HeaderMenu
-        menu={menu}
-        viewport="desktop"
-        primaryDomainUrl={header.shop.primaryDomain.url}
-        publicStoreDomain={publicStoreDomain}
-      />
-      <HeaderCtas isLoggedIn={isLoggedIn} cart={cart} />
-    </header>
+    <>
+      <header
+        className={`w-full font-mono ${isScrolled ? 'fixed left-0 top-0' : ''} container flex justify-between z-20 py-4 bg-white/95 backdrop-blur-sm border-b border-gray-100 transition-all duration-500 ease-in-out`}
+      >
+        <div className="flex items-center gap-6">
+          <NavLink
+            prefetch="intent"
+            to="/"
+            style={activeLinkStyle}
+            end
+            className="text-2xl"
+          >
+            <strong>LOGO</strong>
+          </NavLink>
+          <HeaderMenu
+            menu={menu}
+            viewport="desktop"
+            primaryDomainUrl={header.shop.primaryDomain.url}
+            publicStoreDomain={publicStoreDomain}
+          />
+        </div>
+        <HeaderCtas isLoggedIn={isLoggedIn} cart={cart} />
+      </header>
+      {/* Spacer to prevent content jump when header becomes fixed */}
+      {isScrolled && (
+        <div
+          className="w-full transition-all duration-300 ease-in-out"
+          style={{height: 'var(--header-height)'}}
+        />
+      )}
+    </>
   );
 }
 
@@ -51,7 +86,7 @@ export function HeaderMenu({
   viewport: Viewport;
   publicStoreDomain: HeaderProps['publicStoreDomain'];
 }) {
-  const className = `header-menu-${viewport}`;
+  const className = `uppercase cursor-pointer header-menu-${viewport}`;
   const {close} = useAside();
 
   return (
@@ -100,8 +135,10 @@ function HeaderCtas({
   cart,
 }: Pick<HeaderProps, 'isLoggedIn' | 'cart'>) {
   return (
-    <nav className="header-ctas" role="navigation">
+    <nav className="header-ctas font-mono" role="navigation">
       <HeaderMenuMobileToggle />
+      <SearchToggle />
+      <CartToggle cart={cart} />
       <NavLink prefetch="intent" to="/account" style={activeLinkStyle}>
         <Suspense fallback="Sign in">
           <Await resolve={isLoggedIn} errorElement="Sign in">
@@ -109,8 +146,6 @@ function HeaderCtas({
           </Await>
         </Suspense>
       </NavLink>
-      <SearchToggle />
-      <CartToggle cart={cart} />
     </nav>
   );
 }
@@ -154,7 +189,9 @@ function CartBadge({count}: {count: number | null}) {
         } as CartViewPayload);
       }}
     >
-      Cart {count === null ? <span>&nbsp;</span> : count}
+      {/* <HiOutlineShoppingBag className="w-6 h-6" /> */}
+      Cart
+      {/* {count === null ? <span>&nbsp;</span> : count} */}
     </a>
   );
 }
@@ -225,7 +262,7 @@ function activeLinkStyle({
   isPending: boolean;
 }) {
   return {
-    fontWeight: isActive ? 'bold' : undefined,
+    fontWeight: isActive ? 'semibold' : undefined,
     color: isPending ? 'grey' : 'black',
   };
 }
