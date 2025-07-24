@@ -88,9 +88,11 @@ function SearchResultsPredictiveArticles({
   if (!articles.length) return null;
 
   return (
-    <div className="predictive-search-result" key="articles">
-      <h5>Articles</h5>
-      <ul>
+    <div className="space-y-3">
+      <h5 className="text-sm font-medium text-gray-900 uppercase tracking-wide">
+        Articles
+      </h5>
+      <div className="space-y-2">
         {articles.map((article) => {
           const articleUrl = urlWithTrackingParams({
             baseUrl: `/blogs/${article.blog.handle}/${article.handle}`,
@@ -99,24 +101,47 @@ function SearchResultsPredictiveArticles({
           });
 
           return (
-            <li className="predictive-search-result-item" key={article.id}>
-              <Link onClick={closeSearch} to={articleUrl}>
-                {article.image?.url && (
+            <Link
+              key={article.id}
+              onClick={closeSearch}
+              to={articleUrl}
+              className="flex items-center space-x-3 p-3 hover:bg-gray-50 transition-colors duration-200 rounded-none group"
+            >
+              <div className="w-12 h-12 bg-gray-200 flex-shrink-0 overflow-hidden">
+                {article.image?.url ? (
                   <Image
                     alt={article.image.altText ?? ''}
                     src={article.image.url}
-                    width={50}
-                    height={50}
+                    width={48}
+                    height={48}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
                   />
+                ) : (
+                  <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                    <svg
+                      className="w-5 h-5 text-gray-400"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M2 5a2 2 0 012-2h8a2 2 0 012 2v10a2 2 0 002 2H4a2 2 0 01-2-2V5zm3 1h6v4H5V6zm6 6H5v2h6v-2z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                  </div>
                 )}
-                <div>
-                  <span>{article.title}</span>
-                </div>
-              </Link>
-            </li>
+              </div>
+              <div className="flex-1 min-w-0">
+                <h6 className="text-sm font-medium text-gray-900 truncate group-hover:text-black transition-colors duration-200">
+                  {article.title}
+                </h6>
+                <p className="text-xs text-gray-500 mt-1">Article</p>
+              </div>
+            </Link>
           );
         })}
-      </ul>
+      </div>
     </div>
   );
 }
@@ -129,9 +154,11 @@ function SearchResultsPredictiveCollections({
   if (!collections.length) return null;
 
   return (
-    <div className="predictive-search-result" key="collections">
-      <h5>Collections</h5>
-      <ul>
+    <div className="space-y-3">
+      <h5 className="text-sm font-medium text-gray-900 uppercase tracking-wide">
+        Collections
+      </h5>
+      <div className="space-y-2">
         {collections.map((collection) => {
           const collectionUrl = urlWithTrackingParams({
             baseUrl: `/collections/${collection.handle}`,
@@ -140,24 +167,47 @@ function SearchResultsPredictiveCollections({
           });
 
           return (
-            <li className="predictive-search-result-item" key={collection.id}>
-              <Link onClick={closeSearch} to={collectionUrl}>
-                {collection.image?.url && (
+            <Link
+              key={collection.id}
+              onClick={closeSearch}
+              to={collectionUrl}
+              className="flex items-center font-mono space-x-3 p-3 hover:bg-gray-50 transition-colors duration-200 rounded-none group"
+            >
+              <div className="w-12 h-12 bg-gray-200 flex-shrink-0 overflow-hidden">
+                {collection.image?.url ? (
                   <Image
                     alt={collection.image.altText ?? ''}
                     src={collection.image.url}
-                    width={50}
-                    height={50}
+                    width={48}
+                    height={48}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
                   />
+                ) : (
+                  <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                    <svg
+                      className="w-5 h-5 text-gray-400"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M3 4a1 1 0 011-1h12a1 1 0 011 1v12a1 1 0 01-1 1H4a1 1 0 01-1-1V4zm2 3v6h10V7H5z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                  </div>
                 )}
-                <div>
-                  <span>{collection.title}</span>
-                </div>
-              </Link>
-            </li>
+              </div>
+              <div className="flex-1 min-w-0">
+                <h6 className="text-sm font-medium text-gray-900 truncate group-hover:text-black transition-colors duration-200">
+                  {collection.title}
+                </h6>
+                <p className="text-xs text-gray-500 mt-1">Collection</p>
+              </div>
+            </Link>
           );
         })}
-      </ul>
+      </div>
     </div>
   );
 }
@@ -170,9 +220,11 @@ function SearchResultsPredictivePages({
   if (!pages.length) return null;
 
   return (
-    <div className="predictive-search-result" key="pages">
-      <h5>Pages</h5>
-      <ul>
+    <div className="space-y-3">
+      <h5 className="text-sm font-medium text-gray-900 uppercase tracking-wide">
+        Pages
+      </h5>
+      <div className="space-y-2">
         {pages.map((page) => {
           const pageUrl = urlWithTrackingParams({
             baseUrl: `/pages/${page.handle}`,
@@ -181,16 +233,35 @@ function SearchResultsPredictivePages({
           });
 
           return (
-            <li className="predictive-search-result-item" key={page.id}>
-              <Link onClick={closeSearch} to={pageUrl}>
-                <div>
-                  <span>{page.title}</span>
-                </div>
-              </Link>
-            </li>
+            <Link
+              key={page.id}
+              onClick={closeSearch}
+              to={pageUrl}
+              className="flex items-center space-x-3 p-3 hover:bg-gray-50 transition-colors duration-200 rounded-none group"
+            >
+              <div className="w-12 h-12 bg-gray-100 flex-shrink-0 flex items-center justify-center">
+                <svg
+                  className="w-5 h-5 text-gray-500"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </div>
+              <div className="flex-1 min-w-0">
+                <h6 className="text-sm font-medium text-gray-900 truncate group-hover:text-black transition-colors duration-200">
+                  {page.title}
+                </h6>
+                <p className="text-xs text-gray-500 mt-1">Page</p>
+              </div>
+            </Link>
           );
         })}
-      </ul>
+      </div>
     </div>
   );
 }
@@ -203,9 +274,11 @@ function SearchResultsPredictiveProducts({
   if (!products.length) return null;
 
   return (
-    <div className="predictive-search-result" key="products">
-      <h5>Products</h5>
-      <ul>
+    <div className="space-y-3">
+      <h5 className="text-sm font-medium text-gray-900 uppercase tracking-wide">
+        Products
+      </h5>
+      <div className="space-y-2">
         {products.map((product) => {
           const productUrl = urlWithTrackingParams({
             baseUrl: `/products/${product.handle}`,
@@ -216,25 +289,62 @@ function SearchResultsPredictiveProducts({
           const price = product?.selectedOrFirstAvailableVariant?.price;
           const image = product?.selectedOrFirstAvailableVariant?.image;
           return (
-            <li className="predictive-search-result-item" key={product.id}>
-              <Link to={productUrl} onClick={closeSearch}>
-                {image && (
+            <Link
+              key={product.id}
+              to={productUrl}
+              onClick={closeSearch}
+              className="flex font-mono cursor-pointer space-x-3 p-3 hover:bg-gray-50 transition-colors duration-200 rounded-none group"
+            >
+              <div className="w-20 h-20 bg-gray-200 flex-shrink-0 overflow-hidden">
+                {image ? (
                   <Image
                     alt={image.altText ?? ''}
                     src={image.url}
-                    width={50}
-                    height={50}
+                    width={64}
+                    height={64}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
                   />
+                ) : (
+                  <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                    <div className="text-gray-400 text-xs">No Image</div>
+                  </div>
                 )}
-                <div>
-                  <p>{product.title}</p>
-                  <small>{price && <Money data={price} />}</small>
+              </div>
+              <div className="w-full flex flex-col gap-2 py-2">
+                <h6 className="text-xs line-clamp-1 font-medium max-w-full text-gray-900 truncate group-hover:text-black transition-colors duration-200">
+                  {product.title}
+                </h6>
+                <div className="text-xs text-gray-600">
+                  {price && <Money data={price} />}
                 </div>
-              </Link>
-            </li>
+              </div>
+              {/* <div className="w-16 h-16 bg-gray-200 flex-shrink-0 overflow-hidden">
+                {image ? (
+                  <Image
+                    alt={image.altText ?? ''}
+                    src={image.url}
+                    width={64}
+                    height={64}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                    <div className="text-gray-400 text-xs">No Image</div>
+                  </div>
+                )}
+              </div> */}
+              {/* <div className="flex-1 min-w-0">
+                <h6 className="text-sm font-medium text-gray-900 truncate group-hover:text-black transition-colors duration-200">
+                  {product.title}
+                </h6>
+                <div className="mt-1 text-sm text-gray-600">
+                  {price && <Money data={price} />}
+                </div>
+              </div> */}
+            </Link>
           );
         })}
-      </ul>
+      </div>
     </div>
   );
 }

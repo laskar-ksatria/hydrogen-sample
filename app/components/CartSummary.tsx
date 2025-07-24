@@ -14,33 +14,61 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
     layout === 'page' ? 'cart-summary-page' : 'cart-summary-aside';
 
   return (
-    <div aria-labelledby="cart-summary" className={className}>
-      <h4>Totals</h4>
-      <dl className="cart-subtotal">
-        <dt>Subtotal</dt>
-        <dd>
-          {cart.cost?.subtotalAmount?.amount ? (
-            <Money data={cart.cost?.subtotalAmount} />
-          ) : (
-            '-'
-          )}
-        </dd>
-      </dl>
-      <CartDiscounts discountCodes={cart.discountCodes} />
-      <CartGiftCard giftCardCodes={cart.appliedGiftCards} />
-      <CartCheckoutActions checkoutUrl={cart.checkoutUrl} />
+    <div aria-labelledby="cart-summary" className={`${className} font-mono`}>
+      <div className="border-t border-gray-200 pt-4 mt-4">
+        <h4 className="text-sm font-medium text-gray-900 uppercase tracking-wide mb-4">
+          Order Summary
+        </h4>
+
+        <div className="space-y-3">
+          <div className="flex justify-between text-sm">
+            <span className="text-gray-600">Subtotal</span>
+            <span className="font-medium">
+              {cart.cost?.subtotalAmount?.amount ? (
+                <Money data={cart.cost?.subtotalAmount} />
+              ) : (
+                '-'
+              )}
+            </span>
+          </div>
+
+          <CartDiscounts discountCodes={cart.discountCodes} />
+          <CartGiftCard giftCardCodes={cart.appliedGiftCards} />
+
+          <div className="border-t border-gray-200 pt-3">
+            <div className="flex justify-between text-base font-medium">
+              <span>Total</span>
+              <span>
+                {cart.cost?.totalAmount?.amount ? (
+                  <Money data={cart.cost.totalAmount} />
+                ) : cart.cost?.subtotalAmount?.amount ? (
+                  <Money data={cart.cost.subtotalAmount} />
+                ) : (
+                  '-'
+                )}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <CartCheckoutActions checkoutUrl={cart.checkoutUrl} />
+      </div>
     </div>
   );
 }
+
 function CartCheckoutActions({checkoutUrl}: {checkoutUrl?: string}) {
   if (!checkoutUrl) return null;
 
   return (
-    <div>
-      <a href={checkoutUrl} target="_self">
-        <p>Continue to Checkout &rarr;</p>
+    <div className="mt-6">
+      <a
+        href={checkoutUrl}
+        target="_self"
+        className="block w-full bg-black text-white py-3 px-6 rounded-none hover:bg-gray-800 transition-colors duration-200 text-sm font-medium uppercase tracking-wide text-center"
+      >
+        Continue to Checkout →
       </a>
-      <br />
     </div>
   );
 }
@@ -56,27 +84,39 @@ function CartDiscounts({
       ?.map(({code}) => code) || [];
 
   return (
-    <div>
+    <div className="space-y-3">
       {/* Have existing discount, display it with a remove option */}
-      <dl hidden={!codes.length}>
-        <div>
-          <dt>Discount(s)</dt>
+      {codes.length > 0 && (
+        <div className="flex justify-between text-sm">
+          <span className="text-green-600">Discount</span>
           <UpdateDiscountForm>
-            <div className="cart-discount">
-              <code>{codes?.join(', ')}</code>
-              &nbsp;
-              <button>Remove</button>
+            <div className="flex items-center space-x-2">
+              <code className="text-green-600 font-medium">
+                {codes?.join(', ')}
+              </code>
+              <button className="text-xs text-red-500 hover:text-red-700 transition-colors duration-200">
+                Remove
+              </button>
             </div>
           </UpdateDiscountForm>
         </div>
-      </dl>
+      )}
 
       {/* Show an input to apply a discount */}
       <UpdateDiscountForm discountCodes={codes}>
-        <div>
-          <input type="text" name="discountCode" placeholder="Discount code" />
-          &nbsp;
-          <button type="submit">Apply</button>
+        <div className="space-y-2">
+          <input
+            type="text"
+            name="discountCode"
+            placeholder="Discount code"
+            className="w-full px-3 py-2 border border-gray-200 rounded-none focus:outline-none focus:border-black transition-colors duration-200 text-sm"
+          />
+          <button
+            type="submit"
+            className="w-full bg-gray-100 text-gray-700 py-2 px-4 rounded-none hover:bg-gray-200 transition-colors duration-200 text-sm font-medium uppercase tracking-wide"
+          >
+            Apply Discount
+          </button>
         </div>
       </UpdateDiscountForm>
     </div>
@@ -126,35 +166,46 @@ function CartGiftCard({
   }
 
   return (
-    <div>
+    <div className="space-y-3">
       {/* Have existing gift card applied, display it with a remove option */}
-      <dl hidden={!codes.length}>
-        <div>
-          <dt>Applied Gift Card(s)</dt>
+      {codes.length > 0 && (
+        <div className="flex justify-between text-sm">
+          <span className="text-purple-600">Gift Card</span>
           <UpdateGiftCardForm>
-            <div className="cart-discount">
-              <code>{codes?.join(', ')}</code>
-              &nbsp;
-              <button onSubmit={() => removeAppliedCode}>Remove</button>
+            <div className="flex items-center space-x-2">
+              <code className="text-purple-600 font-medium">
+                {codes?.join(', ')}
+              </code>
+              <button
+                onSubmit={() => removeAppliedCode}
+                className="text-xs text-red-500 hover:text-red-700 transition-colors duration-200"
+              >
+                Remove
+              </button>
             </div>
           </UpdateGiftCardForm>
         </div>
-      </dl>
+      )}
 
-      {/* Show an input to apply a discount */}
+      {/* Show an input to apply a gift card */}
       <UpdateGiftCardForm
         giftCardCodes={appliedGiftCardCodes.current}
         saveAppliedCode={saveAppliedCode}
       >
-        <div>
+        <div className="space-y-2">
           <input
             type="text"
             name="giftCardCode"
             placeholder="Gift card code"
             ref={giftCardCodeInput}
+            className="w-full px-3 py-2 border border-gray-200 rounded-none focus:outline-none focus:border-black transition-colors duration-200 text-sm"
           />
-          &nbsp;
-          <button type="submit">Apply</button>
+          <button
+            type="submit"
+            className="w-full bg-gray-100 text-gray-700 py-2 px-4 rounded-none hover:bg-gray-200 transition-colors duration-200 text-sm font-medium uppercase tracking-wide"
+          >
+            Apply Gift Card
+          </button>
         </div>
       </UpdateGiftCardForm>
     </div>

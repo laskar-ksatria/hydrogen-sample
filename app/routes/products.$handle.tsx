@@ -183,7 +183,7 @@ export default function Product() {
         </div>
 
         <div className="md:col-span-6 lg:col-span-4 xl:col-span-4 font-mono">
-          <div className="md:sticky md:top-[70px] z-10 bg-white">
+          <div className="md:sticky md:top-[70px] z-0 bg-white">
             <div className="space-y-6">
               {/* Brand */}
               <div className="text-sm font-medium text-gray-500 uppercase tracking-wide">
