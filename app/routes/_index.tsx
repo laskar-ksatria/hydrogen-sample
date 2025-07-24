@@ -15,6 +15,7 @@ import {BlogList} from '~/components/BlogList';
 import {
   processHomePageData,
   transformForBrandSection,
+  getCollectionsDisplayReferences,
 } from '~/examples/metaobject-usage';
 
 export const meta: MetaFunction = () => {
@@ -75,24 +76,30 @@ export default function Homepage() {
     data.homeContent.metaobject,
   );
 
-  console.log(homeContent);
+  // Get collections_display references for ProductCarousel
+  const collectionsDisplay = getCollectionsDisplayReferences(
+    data.homeContent.metaobject.fields,
+  );
+
+  console.log(collectionsDisplay);
 
   return (
     <div className="home">
       <SectionBanner collections={homeContent.bannerCollections} />
-      <ProductCarousel useContainer={true} />
-      <ProductCarousel useContainer={true} />
+      {collectionsDisplay?.map((item) => (
+        <ProductCarousel
+          products={item.products}
+          key={item.title}
+          title={item.title}
+          useContainer={true}
+        />
+      ))}
       {brandSectionProps ? (
         <BrandSection {...brandSectionProps} />
       ) : (
         <BrandSection />
       )}
       <BlogList useContainer={true} />
-      <div className="py-6">
-        {/* <RowSection position="left" /> */}
-        {/* <RowSection position="right" /> */}
-        {/* <RowSection position="left" /> */}
-      </div>
     </div>
   );
 }
@@ -214,7 +221,75 @@ query HOME_PAGE {
           fields {
             key
             value
+            references(first: 10) {
+              nodes {
+                          ... on Collection {
+            id
+            title
+            handle
+            products(first: 15) {
+              nodes {
+                title
+                vendor
+                handle
+                priceRange {
+                  minVariantPrice {
+                    currencyCode
+                    amount
+                  }
+                  maxVariantPrice {
+                    currencyCode
+                    amount
+									}
+                }
+                images(first: 10) {
+                  nodes {
+                    id
+                    url
+                    altText
+                  }
+                }
+              }
+            }
+            image {
+              id
+              url
+              altText
+            }
+          }
+              }
+            }
             reference {
+                   ... on Collection {
+            id
+            title
+            handle
+            products(first: 15) {
+              nodes {
+                title
+                vendor
+                handle
+                priceRange {
+                  maxVariantPrice {
+                    currencyCode
+                    amount
+									}
+                }
+                images(first: 10) {
+                  nodes {
+                    id
+                    url
+                    altText
+                  }
+                }
+              }
+            }
+            image {
+              id
+              url
+              altText
+            }
+          }
               ... on MediaImage {
                 image {
                   altText
@@ -235,6 +310,36 @@ query HOME_PAGE {
               type
               value
               reference {
+                        ... on Collection {
+            id
+            title
+            handle
+            products(first: 15) {
+              nodes {
+                title
+                vendor
+                handle
+                priceRange {
+                  maxVariantPrice {
+                    currencyCode
+                    amount
+									}
+                }
+                images(first: 10) {
+                  nodes {
+                    id
+                    url
+                    altText
+                  }
+                }
+              }
+            }
+            image {
+              id
+              url
+              altText
+            }
+          }
                 ... on MediaImage {
                   image {
                     altText
@@ -253,6 +358,7 @@ query HOME_PAGE {
               nodes {
                 title
                 vendor
+                handle
                 priceRange {
                   maxVariantPrice {
                     currencyCode

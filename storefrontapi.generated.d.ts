@@ -375,11 +375,80 @@ export type Home_PageQuery = {
             Pick<StorefrontAPI.Metaobject, 'id'> & {
               fields: Array<
                 Pick<StorefrontAPI.MetaobjectField, 'key' | 'value'> & {
-                  reference?: StorefrontAPI.Maybe<{
-                    image?: StorefrontAPI.Maybe<
-                      Pick<StorefrontAPI.Image, 'altText' | 'id' | 'url'>
+                  references?: StorefrontAPI.Maybe<{
+                    nodes: Array<
+                      Pick<
+                        StorefrontAPI.Collection,
+                        'id' | 'title' | 'handle'
+                      > & {
+                        products: {
+                          nodes: Array<
+                            Pick<
+                              StorefrontAPI.Product,
+                              'title' | 'vendor' | 'handle'
+                            > & {
+                              priceRange: {
+                                minVariantPrice: Pick<
+                                  StorefrontAPI.MoneyV2,
+                                  'currencyCode' | 'amount'
+                                >;
+                                maxVariantPrice: Pick<
+                                  StorefrontAPI.MoneyV2,
+                                  'currencyCode' | 'amount'
+                                >;
+                              };
+                              images: {
+                                nodes: Array<
+                                  Pick<
+                                    StorefrontAPI.Image,
+                                    'id' | 'url' | 'altText'
+                                  >
+                                >;
+                              };
+                            }
+                          >;
+                        };
+                        image?: StorefrontAPI.Maybe<
+                          Pick<StorefrontAPI.Image, 'id' | 'url' | 'altText'>
+                        >;
+                      }
                     >;
                   }>;
+                  reference?: StorefrontAPI.Maybe<
+                    | (Pick<
+                        StorefrontAPI.Collection,
+                        'id' | 'title' | 'handle'
+                      > & {
+                        products: {
+                          nodes: Array<
+                            Pick<StorefrontAPI.Product, 'title' | 'vendor'> & {
+                              priceRange: {
+                                maxVariantPrice: Pick<
+                                  StorefrontAPI.MoneyV2,
+                                  'currencyCode' | 'amount'
+                                >;
+                              };
+                              images: {
+                                nodes: Array<
+                                  Pick<
+                                    StorefrontAPI.Image,
+                                    'id' | 'url' | 'altText'
+                                  >
+                                >;
+                              };
+                            }
+                          >;
+                        };
+                        image?: StorefrontAPI.Maybe<
+                          Pick<StorefrontAPI.Image, 'id' | 'url' | 'altText'>
+                        >;
+                      })
+                    | {
+                        image?: StorefrontAPI.Maybe<
+                          Pick<StorefrontAPI.Image, 'altText' | 'id' | 'url'>
+                        >;
+                      }
+                  >;
                 }
               >;
             }
@@ -414,11 +483,50 @@ export type Home_PageQuery = {
                       StorefrontAPI.MetaobjectField,
                       'key' | 'type' | 'value'
                     > & {
-                      reference?: StorefrontAPI.Maybe<{
-                        image?: StorefrontAPI.Maybe<
-                          Pick<StorefrontAPI.Image, 'altText' | 'id' | 'url'>
-                        >;
-                      }>;
+                      reference?: StorefrontAPI.Maybe<
+                        | (Pick<
+                            StorefrontAPI.Collection,
+                            'id' | 'title' | 'handle'
+                          > & {
+                            products: {
+                              nodes: Array<
+                                Pick<
+                                  StorefrontAPI.Product,
+                                  'title' | 'vendor'
+                                > & {
+                                  priceRange: {
+                                    maxVariantPrice: Pick<
+                                      StorefrontAPI.MoneyV2,
+                                      'currencyCode' | 'amount'
+                                    >;
+                                  };
+                                  images: {
+                                    nodes: Array<
+                                      Pick<
+                                        StorefrontAPI.Image,
+                                        'id' | 'url' | 'altText'
+                                      >
+                                    >;
+                                  };
+                                }
+                              >;
+                            };
+                            image?: StorefrontAPI.Maybe<
+                              Pick<
+                                StorefrontAPI.Image,
+                                'id' | 'url' | 'altText'
+                              >
+                            >;
+                          })
+                        | {
+                            image?: StorefrontAPI.Maybe<
+                              Pick<
+                                StorefrontAPI.Image,
+                                'altText' | 'id' | 'url'
+                              >
+                            >;
+                          }
+                      >;
                     }
                   >;
                 })
@@ -1274,7 +1382,7 @@ interface GeneratedQueryTypes {
     return: RecommendedProductsQuery;
     variables: RecommendedProductsQueryVariables;
   };
-  '#graphql\nquery HOME_PAGE {\n  metaobject(handle: {type: "home_page", handle: "home"}) {\n    id\n    handle\n    fields {\n      key\n      value\n      reference {\n        ... on Metaobject {\n          id\n          fields {\n            key\n            value\n            reference {\n              ... on MediaImage {\n                image {\n                  altText\n                  id \n                  url\n                }\n              }\n            }\n          }\n        }\n      }\n      references(first: 100) {\n        nodes {\n          ... on Metaobject {\n            id\n            fields {\n              key\n              type\n              value\n              reference {\n                ... on MediaImage {\n                  image {\n                    altText\n                    id \n                    url\n                  }\n                }\n              }\n            }\n          }\n          ... on Collection {\n            id\n            title\n            handle\n            products(first: 15) {\n              nodes {\n                title\n                vendor\n                priceRange {\n                  maxVariantPrice {\n                    currencyCode\n                    amount\n\t\t\t\t\t\t\t\t\t}\n                }\n                images(first: 10) {\n                  nodes {\n                    id\n                    url\n                    altText\n                  }\n                }\n              }\n            }\n            image {\n              id\n              url\n              altText\n            }\n          }\n        }\n      }\n    }\n  }\n}\n': {
+  '#graphql\nquery HOME_PAGE {\n  metaobject(handle: {type: "home_page", handle: "home"}) {\n    id\n    handle\n    fields {\n      key\n      value\n      reference {\n        ... on Metaobject {\n          id\n          fields {\n            key\n            value\n            references(first: 10) {\n              nodes {\n                          ... on Collection {\n            id\n            title\n            handle\n            products(first: 15) {\n              nodes {\n                title\n                vendor\n                handle\n                priceRange {\n                  minVariantPrice {\n                    currencyCode\n                    amount\n                  }\n                  maxVariantPrice {\n                    currencyCode\n                    amount\n\t\t\t\t\t\t\t\t\t}\n                }\n                images(first: 10) {\n                  nodes {\n                    id\n                    url\n                    altText\n                  }\n                }\n              }\n            }\n            image {\n              id\n              url\n              altText\n            }\n          }\n              }\n            }\n            reference {\n                   ... on Collection {\n            id\n            title\n            handle\n            products(first: 15) {\n              nodes {\n                title\n                vendor\n                priceRange {\n                  maxVariantPrice {\n                    currencyCode\n                    amount\n\t\t\t\t\t\t\t\t\t}\n                }\n                images(first: 10) {\n                  nodes {\n                    id\n                    url\n                    altText\n                  }\n                }\n              }\n            }\n            image {\n              id\n              url\n              altText\n            }\n          }\n              ... on MediaImage {\n                image {\n                  altText\n                  id \n                  url\n                }\n              }\n            }\n          }\n        }\n      }\n      references(first: 100) {\n        nodes {\n          ... on Metaobject {\n            id\n            fields {\n              key\n              type\n              value\n              reference {\n                        ... on Collection {\n            id\n            title\n            handle\n            products(first: 15) {\n              nodes {\n                title\n                vendor\n                priceRange {\n                  maxVariantPrice {\n                    currencyCode\n                    amount\n\t\t\t\t\t\t\t\t\t}\n                }\n                images(first: 10) {\n                  nodes {\n                    id\n                    url\n                    altText\n                  }\n                }\n              }\n            }\n            image {\n              id\n              url\n              altText\n            }\n          }\n                ... on MediaImage {\n                  image {\n                    altText\n                    id \n                    url\n                  }\n                }\n              }\n            }\n          }\n          ... on Collection {\n            id\n            title\n            handle\n            products(first: 15) {\n              nodes {\n                title\n                vendor\n                priceRange {\n                  maxVariantPrice {\n                    currencyCode\n                    amount\n\t\t\t\t\t\t\t\t\t}\n                }\n                images(first: 10) {\n                  nodes {\n                    id\n                    url\n                    altText\n                  }\n                }\n              }\n            }\n            image {\n              id\n              url\n              altText\n            }\n          }\n        }\n      }\n    }\n  }\n}\n': {
     return: HOME_PAGEQuery;
     variables: HOME_PAGEQueryVariables;
   };

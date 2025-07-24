@@ -3,6 +3,8 @@ import type {
   Metaobject,
   Collection,
   BrandSectionBanner,
+  MetaobjectField,
+  Product,
 } from '~/types/metaobject';
 import {
   getBannerCollections,
@@ -12,6 +14,7 @@ import {
   getStringField,
   isCollection,
   isMetaobject,
+  getFieldByKey,
 } from '~/types/metaobject';
 
 // Example: Processing the metaobject response
@@ -266,3 +269,30 @@ export const HOME_METAOBJECT_QUERY = `
     }
   }
 ` as const;
+
+// Helper to extract collections_display references as array of { title, products }
+export function getCollectionsDisplayReferences(
+  fields: MetaobjectField[],
+): Array<{title: string; products: Product[]}> {
+  const field = getFieldByKey(fields, 'collections_display');
+  if (!field?.references?.nodes) return [];
+
+  // Only process nodes that are Metaobject (have fields)
+  return field.references.nodes
+    .filter((node): node is Metaobject => 'fields' in node)
+    .map((node) => {
+      const titleField = node.fields.find(
+        (f: MetaobjectField) => f.key === 'title',
+      );
+      const collectionField = node.fields.find(
+        (f: MetaobjectField) => f.key === 'collection',
+      );
+      const collection = collectionField?.reference as Collection | undefined;
+      if (!titleField?.value || !collection?.products) return null;
+      return {
+        title: titleField.value,
+        products: collection.products.nodes,
+      };
+    })
+    .filter(Boolean) as Array<{title: string; products: Product[]}>;
+}
