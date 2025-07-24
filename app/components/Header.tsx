@@ -209,7 +209,7 @@ function HeaderMenuMobileToggle() {
   const {open} = useAside();
   return (
     <button
-      className="header-menu-mobile-toggle reset"
+      className="header-menu-mobile-toggle reset cursor-pointer"
       onClick={() => open('mobile')}
     >
       <h3 className="text-xl">☰</h3>
@@ -221,7 +221,7 @@ function SearchToggle() {
   const {open} = useAside();
   return (
     <button
-      className="reset flex items-center justify-center w-8 h-8 hover:bg-gray-100 hover:rounded-full transition-all duration-200"
+      className="reset flex items-center justify-center w-8 h-8 hover:bg-gray-100 hover:rounded-full transition-all duration-200 cursor-pointer"
       onClick={() => open('search')}
       title="Search"
     >
@@ -258,7 +258,7 @@ function CartBadge({count}: {count: number | null}) {
           url: window.location.href || '',
         } as CartViewPayload);
       }}
-      className="relative flex items-center justify-center w-8 h-8 hover:bg-gray-100 hover:rounded-full transition-all duration-200"
+      className="relative flex items-center justify-center w-8 h-8 hover:bg-gray-100 hover:rounded-full transition-all duration-200 cursor-pointer"
       title={`Cart ${count ? `(${count})` : ''}`}
     >
       <svg

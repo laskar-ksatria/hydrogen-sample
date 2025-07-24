@@ -35,7 +35,7 @@ export function RowSection({position}: {position: 'left' | 'right'}) {
 
             {/* CTA Button */}
             <div className="pt-2">
-              <button className="border-2 border-gray-300 text-gray-700 px-6 py-2 text-sm font-medium hover:bg-gray-50 transition-colors duration-200">
+              <button className="border-2 border-gray-300 text-gray-700 px-6 py-2 text-sm font-medium hover:bg-gray-50 transition-colors duration-200 cursor-pointer">
                 Button label
               </button>
             </div>

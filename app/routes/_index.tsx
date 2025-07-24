@@ -12,7 +12,10 @@ import {ProductCarousel} from '~/components/ProductCarousel';
 import {BrandSection} from '~/components/BrandSection';
 import {RowSection} from '~/components/RowSection';
 import {BlogList} from '~/components/BlogList';
-import {processHomePageData} from '~/examples/metaobject-usage';
+import {
+  processHomePageData,
+  transformForBrandSection,
+} from '~/examples/metaobject-usage';
 
 export const meta: MetaFunction = () => {
   return [{title: 'Hydrogen | Home'}];
@@ -68,15 +71,22 @@ export default function Homepage() {
   const data = useLoaderData<typeof loader>();
 
   const homeContent = processHomePageData(data.homeContent);
+  const brandSectionProps = transformForBrandSection(
+    data.homeContent.metaobject,
+  );
 
-  console.log(data.homeContent);
+  console.log(homeContent);
 
   return (
     <div className="home">
-      <SectionBanner />
+      <SectionBanner collections={homeContent.bannerCollections} />
       <ProductCarousel useContainer={true} />
       <ProductCarousel useContainer={true} />
-      <BrandSection />
+      {brandSectionProps ? (
+        <BrandSection {...brandSectionProps} />
+      ) : (
+        <BrandSection />
+      )}
       <BlogList useContainer={true} />
       <div className="py-6">
         {/* <RowSection position="left" /> */}

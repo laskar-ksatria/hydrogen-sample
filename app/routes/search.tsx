@@ -69,7 +69,7 @@ export default function SearchPage() {
                     />
                     <button
                       type="submit"
-                      className="absolute right-0 top-0 h-full px-6 bg-black text-white hover:bg-gray-800 transition-colors duration-200 flex items-center justify-center"
+                      className="absolute right-0 top-0 h-full px-6 bg-black text-white hover:bg-gray-800 transition-colors duration-200 flex items-center justify-center cursor-pointer"
                     >
                       <svg
                         className="w-5 h-5"

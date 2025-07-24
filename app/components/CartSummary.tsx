@@ -65,7 +65,7 @@ function CartCheckoutActions({checkoutUrl}: {checkoutUrl?: string}) {
       <a
         href={checkoutUrl}
         target="_self"
-        className="block w-full bg-black text-white py-3 px-6 rounded-none hover:bg-gray-800 transition-colors duration-200 text-sm font-medium uppercase tracking-wide text-center"
+        className="block w-full bg-black text-white py-3 px-6 rounded-none hover:bg-gray-800 transition-colors duration-200 text-sm font-medium uppercase tracking-wide text-center cursor-pointer"
       >
         Continue to Checkout →
       </a>
@@ -94,7 +94,7 @@ function CartDiscounts({
               <code className="text-green-600 font-medium">
                 {codes?.join(', ')}
               </code>
-              <button className="text-xs text-red-500 hover:text-red-700 transition-colors duration-200">
+              <button className="text-xs text-red-500 hover:text-red-700 transition-colors duration-200 cursor-pointer">
                 Remove
               </button>
             </div>
@@ -113,7 +113,7 @@ function CartDiscounts({
           />
           <button
             type="submit"
-            className="w-full bg-gray-100 text-gray-700 py-2 px-4 rounded-none hover:bg-gray-200 transition-colors duration-200 text-sm font-medium uppercase tracking-wide"
+            className="w-full bg-gray-100 text-gray-700 py-2 px-4 rounded-none hover:bg-gray-200 transition-colors duration-200 text-sm font-medium uppercase tracking-wide cursor-pointer"
           >
             Apply Discount
           </button>
@@ -178,7 +178,7 @@ function CartGiftCard({
               </code>
               <button
                 onSubmit={() => removeAppliedCode}
-                className="text-xs text-red-500 hover:text-red-700 transition-colors duration-200"
+                className="text-xs text-red-500 hover:text-red-700 transition-colors duration-200 cursor-pointer"
               >
                 Remove
               </button>
@@ -202,7 +202,7 @@ function CartGiftCard({
           />
           <button
             type="submit"
-            className="w-full bg-gray-100 text-gray-700 py-2 px-4 rounded-none hover:bg-gray-200 transition-colors duration-200 text-sm font-medium uppercase tracking-wide"
+            className="w-full bg-gray-100 text-gray-700 py-2 px-4 rounded-none hover:bg-gray-200 transition-colors duration-200 text-sm font-medium uppercase tracking-wide cursor-pointer"
           >
             Apply Gift Card
           </button>

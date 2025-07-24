@@ -60,17 +60,36 @@ export function extractBannerCollections(metaobject: Metaobject): Collection[] {
   return getBannerCollections(metaobject.fields);
 }
 
-// Example: Get brand section images
+// Example: Get brand section images with flexible key matching
 export function getBrandSectionImages(brandBanner: BrandSectionBanner | null) {
   if (!brandBanner) return null;
 
-  const desktopField = brandBanner.fields.find(
-    (field) => field.key === 'desktop',
-  );
-  const mobileField = brandBanner.fields.find(
-    (field) => field.key === 'mobile',
-  );
-  const titleField = brandBanner.fields.find((field) => field.key === 'title');
+  // Helper function to find field by key (case-insensitive)
+  const findFieldByKey = (targetKey: string) => {
+    return brandBanner.fields.find(
+      (field) => field.key.toLowerCase() === targetKey.toLowerCase(),
+    );
+  };
+
+  // Try multiple possible key variations for desktop
+  const desktopField =
+    findFieldByKey('desktop') ||
+    findFieldByKey('Desktop') ||
+    findFieldByKey('DESKTOP') ||
+    findFieldByKey('desk');
+
+  // Try multiple possible key variations for mobile
+  const mobileField =
+    findFieldByKey('mobile') ||
+    findFieldByKey('Mobile') ||
+    findFieldByKey('MOBILE') ||
+    findFieldByKey('mob');
+
+  // Try multiple possible key variations for title
+  const titleField =
+    findFieldByKey('title') ||
+    findFieldByKey('Title') ||
+    findFieldByKey('TITLE');
 
   return {
     desktop: desktopField?.reference?.image || null,
