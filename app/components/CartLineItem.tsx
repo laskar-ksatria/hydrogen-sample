@@ -26,43 +26,60 @@ export function CartLineItem({
   const {close} = useAside();
 
   return (
-    <li key={id} className="cart-line">
-      {image && (
-        <Image
-          alt={title}
-          aspectRatio="1/1"
-          data={image}
-          height={100}
-          loading="lazy"
-          width={100}
-        />
-      )}
+    <li key={id} className="border-b border-gray-100 last:border-b-0">
+      <div className="flex font-mono space-x-3 py-3 hover:bg-gray-50 transition-colors duration-200 rounded-none group">
+        {/* Product Image */}
+        <div className="w-24 h-full bg-gray-200 flex-shrink-0 overflow-hidden">
+          {image ? (
+            <Image
+              alt={title}
+              data={image}
+              width={80}
+              height={80}
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
+            />
+          ) : (
+            <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+              <div className="text-gray-400 text-xs">No Image</div>
+            </div>
+          )}
+        </div>
 
-      <div>
-        <Link
-          prefetch="intent"
-          to={lineItemUrl}
-          onClick={() => {
-            if (layout === 'aside') {
-              close();
-            }
-          }}
-        >
-          <p>
-            <strong>{product.title}</strong>
-          </p>
-        </Link>
-        <ProductPrice price={line?.cost?.totalAmount} />
-        <ul>
-          {selectedOptions.map((option) => (
-            <li key={option.name}>
-              <small>
-                {option.name}: {option.value}
-              </small>
-            </li>
-          ))}
-        </ul>
-        <CartLineQuantity line={line} />
+        {/* Product Details */}
+        <div className="w-full flex flex-col gap-2 py-2">
+          <div className="flex justify-between">
+            <Link
+              prefetch="intent"
+              to={lineItemUrl}
+              onClick={() => {
+                if (layout === 'aside') {
+                  close();
+                }
+              }}
+              className="block"
+            >
+              <h3 className="text-xs line-clamp-1 font-medium max-w-full text-gray-900 truncate group-hover:text-black transition-colors duration-200">
+                {product.title}
+              </h3>
+            </Link>
+            <div className="text-[10px] text-gray-600">
+              <ProductPrice price={line?.cost?.totalAmount} />
+            </div>
+          </div>
+          {/* Selected Options */}
+          {selectedOptions.length > 0 && (
+            <div className="space-y-1">
+              {selectedOptions.map((option) => (
+                <div key={option.name} className="text-xs text-gray-500">
+                  {option.name}: {option.value}
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Quantity Controls */}
+          <CartLineQuantity line={line} />
+        </div>
       </div>
     </li>
   );
@@ -80,30 +97,40 @@ function CartLineQuantity({line}: {line: CartLine}) {
   const nextQuantity = Number((quantity + 1).toFixed(0));
 
   return (
-    <div className="cart-line-quantity">
-      <small>Quantity: {quantity} &nbsp;&nbsp;</small>
-      <CartLineUpdateButton lines={[{id: lineId, quantity: prevQuantity}]}>
-        <button
-          aria-label="Decrease quantity"
-          disabled={quantity <= 1 || !!isOptimistic}
-          name="decrease-quantity"
-          value={prevQuantity}
-        >
-          <span>&#8722; </span>
-        </button>
-      </CartLineUpdateButton>
-      &nbsp;
-      <CartLineUpdateButton lines={[{id: lineId, quantity: nextQuantity}]}>
-        <button
-          aria-label="Increase quantity"
-          name="increase-quantity"
-          value={nextQuantity}
-          disabled={!!isOptimistic}
-        >
-          <span>&#43;</span>
-        </button>
-      </CartLineUpdateButton>
-      &nbsp;
+    <div className="flex items-center justify-between mt-2">
+      <div className="flex items-center space-x-2">
+        <span className="text-xs text-gray-500">Qty:</span>
+        <div className="flex items-center border border-gray-200 rounded-none">
+          <CartLineUpdateButton lines={[{id: lineId, quantity: prevQuantity}]}>
+            <button
+              aria-label="Decrease quantity"
+              disabled={quantity <= 1 || !!isOptimistic}
+              name="decrease-quantity"
+              value={prevQuantity}
+              className="w-6 h-6 flex items-center justify-center text-gray-500 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-colors duration-200 text-xs"
+            >
+              −
+            </button>
+          </CartLineUpdateButton>
+
+          <span className="w-8 h-6 flex items-center justify-center text-xs font-medium border-x border-gray-200">
+            {quantity}
+          </span>
+
+          <CartLineUpdateButton lines={[{id: lineId, quantity: nextQuantity}]}>
+            <button
+              aria-label="Increase quantity"
+              name="increase-quantity"
+              value={nextQuantity}
+              disabled={!!isOptimistic}
+              className="w-6 h-6 flex items-center justify-center text-gray-500 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-colors duration-200 text-xs"
+            >
+              +
+            </button>
+          </CartLineUpdateButton>
+        </div>
+      </div>
+
       <CartLineRemoveButton lineIds={[lineId]} disabled={!!isOptimistic} />
     </div>
   );
@@ -128,7 +155,11 @@ function CartLineRemoveButton({
       action={CartForm.ACTIONS.LinesRemove}
       inputs={{lineIds}}
     >
-      <button disabled={disabled} type="submit">
+      <button
+        disabled={disabled}
+        type="submit"
+        className="text-xs text-red-500 hover:text-red-700 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-colors duration-200 uppercase tracking-wide"
+      >
         Remove
       </button>
     </CartForm>

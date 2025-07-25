@@ -12,6 +12,11 @@ import {ProductCarousel} from '~/components/ProductCarousel';
 import {BrandSection} from '~/components/BrandSection';
 import {RowSection} from '~/components/RowSection';
 import {BlogList} from '~/components/BlogList';
+import {
+  processHomePageData,
+  transformForBrandSection,
+  getCollectionsDisplayReferences,
+} from '~/examples/metaobject-usage';
 
 export const meta: MetaFunction = () => {
   return [{title: 'Hydrogen | Home'}];
@@ -32,13 +37,15 @@ export async function loader(args: LoaderFunctionArgs) {
  * needed to render the page. If it's unavailable, the whole page should 400 or 500 error.
  */
 async function loadCriticalData({context}: LoaderFunctionArgs) {
-  const [{collections}] = await Promise.all([
+  const [{collections}, homeContent] = await Promise.all([
     context.storefront.query(FEATURED_COLLECTION_QUERY),
+    context.storefront.query(Q_HOME_PAGE_QUERY),
     // Add other queries here, so that they are loaded in parallel
   ]);
 
   return {
     featuredCollection: collections.nodes[0],
+    homeContent,
   };
 }
 
@@ -63,18 +70,34 @@ function loadDeferredData({context}: LoaderFunctionArgs) {
 
 export default function Homepage() {
   const data = useLoaderData<typeof loader>();
+
+  const homeContent = processHomePageData(data.homeContent);
+  const brandSectionProps = transformForBrandSection(
+    data.homeContent.metaobject,
+  );
+
+  // Get collections_display references for ProductCarousel
+  const collectionsDisplay = getCollectionsDisplayReferences(
+    data.homeContent.metaobject.fields,
+  );
+
   return (
     <div className="home">
-      <SectionBanner />
-      <ProductCarousel useContainer={true} />
-      <ProductCarousel useContainer={true} />
-      <BrandSection />
+      <SectionBanner collections={homeContent.bannerCollections} />
+      {collectionsDisplay?.map((item) => (
+        <ProductCarousel
+          products={item.products}
+          key={item.title}
+          title={item.title}
+          useContainer={true}
+        />
+      ))}
+      {brandSectionProps ? (
+        <BrandSection {...brandSectionProps} />
+      ) : (
+        <BrandSection />
+      )}
       <BlogList useContainer={true} />
-      <div className="py-6">
-        {/* <RowSection position="left" /> */}
-        {/* <RowSection position="right" /> */}
-        {/* <RowSection position="left" /> */}
-      </div>
     </div>
   );
 }
@@ -181,3 +204,183 @@ const RECOMMENDED_PRODUCTS_QUERY = `#graphql
     }
   }
 ` as const;
+
+const Q_HOME_PAGE_QUERY = `#graphql
+query HOME_PAGE {
+  metaobject(handle: {type: "home_page", handle: "home"}) {
+    id
+    handle
+    fields {
+      key
+      value
+      reference {
+        ... on Metaobject {
+          id
+          fields {
+            key
+            value
+            references(first: 10) {
+              nodes {
+                          ... on Collection {
+            id
+            title
+            handle
+            products(first: 15) {
+              nodes {
+                title
+                vendor
+                handle
+                priceRange {
+                  minVariantPrice {
+                    currencyCode
+                    amount
+                  }
+                  maxVariantPrice {
+                    currencyCode
+                    amount
+									}
+                }
+                images(first: 10) {
+                  nodes {
+                    id
+                    url
+                    altText
+                  }
+                }
+              }
+            }
+            image {
+              id
+              url
+              altText
+            }
+          }
+              }
+            }
+            reference {
+                   ... on Collection {
+            id
+            title
+            handle
+            products(first: 15) {
+              nodes {
+                title
+                vendor
+                handle
+                priceRange {
+                  maxVariantPrice {
+                    currencyCode
+                    amount
+									}
+                }
+                images(first: 10) {
+                  nodes {
+                    id
+                    url
+                    altText
+                  }
+                }
+              }
+            }
+            image {
+              id
+              url
+              altText
+            }
+          }
+              ... on MediaImage {
+                image {
+                  altText
+                  id 
+                  url
+                }
+              }
+            }
+          }
+        }
+      }
+      references(first: 100) {
+        nodes {
+          ... on Metaobject {
+            id
+            fields {
+              key
+              type
+              value
+              reference {
+                        ... on Collection {
+            id
+            title
+            handle
+            products(first: 15) {
+              nodes {
+                title
+                vendor
+                handle
+                priceRange {
+                  maxVariantPrice {
+                    currencyCode
+                    amount
+									}
+                }
+                images(first: 10) {
+                  nodes {
+                    id
+                    url
+                    altText
+                  }
+                }
+              }
+            }
+            image {
+              id
+              url
+              altText
+            }
+          }
+                ... on MediaImage {
+                  image {
+                    altText
+                    id 
+                    url
+                  }
+                }
+              }
+            }
+          }
+          ... on Collection {
+            id
+            title
+            handle
+            products(first: 15) {
+              nodes {
+                title
+                vendor
+                handle
+                priceRange {
+                  maxVariantPrice {
+                    currencyCode
+                    amount
+									}
+                }
+                images(first: 10) {
+                  nodes {
+                    id
+                    url
+                    altText
+                  }
+                }
+              }
+            }
+            image {
+              id
+              url
+              altText
+            }
+          }
+        }
+      }
+    }
+  }
+}
+`;

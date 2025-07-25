@@ -85,7 +85,10 @@ function AccountMenu() {
 function Logout() {
   return (
     <Form className="account-logout" method="POST" action="/account/logout">
-      &nbsp;<button type="submit">Sign out</button>
+      &nbsp;
+      <button type="submit" className="cursor-pointer">
+        Sign out
+      </button>
     </Form>
   );
 }

@@ -95,7 +95,7 @@ function BlogCard({blog}: {blog: Blog}) {
 
         {/* Read More Link */}
         <div className="pt-2">
-          <button className="text-sm font-medium text-gray-900 hover:text-gray-700 transition-colors duration-200 border-b border-gray-300 hover:border-gray-500">
+          <button className="text-sm font-medium text-gray-900 hover:text-gray-700 transition-colors duration-200 border-b border-gray-300 hover:border-gray-500 cursor-pointer">
             Read More
           </button>
         </div>

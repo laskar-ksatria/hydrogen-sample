@@ -137,15 +137,70 @@ function HeaderCtas({
   return (
     <nav className="header-ctas font-mono" role="navigation">
       <HeaderMenuMobileToggle />
-      <SearchToggle />
-      <CartToggle cart={cart} />
-      <NavLink prefetch="intent" to="/account" style={activeLinkStyle}>
-        <Suspense fallback="Sign in">
-          <Await resolve={isLoggedIn} errorElement="Sign in">
-            {(isLoggedIn) => (isLoggedIn ? 'Account' : 'Sign in')}
-          </Await>
-        </Suspense>
-      </NavLink>
+      <div className="md:flex items-center gap-4 hidden">
+        <SearchToggle />
+        <CartToggle cart={cart} />
+        <NavLink
+          prefetch="intent"
+          to="/account"
+          style={activeLinkStyle}
+          className="flex items-center justify-center w-8 h-8 hover:bg-gray-100 hover:rounded-full transition-all duration-200"
+          title="Account"
+        >
+          <Suspense
+            fallback={
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                />
+              </svg>
+            }
+          >
+            <Await
+              resolve={isLoggedIn}
+              errorElement={
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                  />
+                </svg>
+              }
+            >
+              {(isLoggedIn) => (
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                  />
+                </svg>
+              )}
+            </Await>
+          </Suspense>
+        </NavLink>
+      </div>
     </nav>
   );
 }
@@ -154,10 +209,10 @@ function HeaderMenuMobileToggle() {
   const {open} = useAside();
   return (
     <button
-      className="header-menu-mobile-toggle reset"
+      className="header-menu-mobile-toggle reset cursor-pointer"
       onClick={() => open('mobile')}
     >
-      <h3>☰</h3>
+      <h3 className="text-xl">☰</h3>
     </button>
   );
 }
@@ -165,8 +220,24 @@ function HeaderMenuMobileToggle() {
 function SearchToggle() {
   const {open} = useAside();
   return (
-    <button className="reset" onClick={() => open('search')}>
-      Search
+    <button
+      className="reset flex items-center justify-center w-8 h-8 hover:bg-gray-100 hover:rounded-full transition-all duration-200 cursor-pointer"
+      onClick={() => open('search')}
+      title="Search"
+    >
+      <svg
+        className="w-5 h-5"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+        />
+      </svg>
     </button>
   );
 }
@@ -176,8 +247,7 @@ function CartBadge({count}: {count: number | null}) {
   const {publish, shop, cart, prevCart} = useAnalytics();
 
   return (
-    <a
-      href="/cart"
+    <button
       onClick={(e) => {
         e.preventDefault();
         open('cart');
@@ -188,11 +258,28 @@ function CartBadge({count}: {count: number | null}) {
           url: window.location.href || '',
         } as CartViewPayload);
       }}
+      className="relative flex items-center justify-center w-8 h-8 hover:bg-gray-100 hover:rounded-full transition-all duration-200 cursor-pointer"
+      title={`Cart ${count ? `(${count})` : ''}`}
     >
-      {/* <HiOutlineShoppingBag className="w-6 h-6" /> */}
-      Cart
-      {/* {count === null ? <span>&nbsp;</span> : count} */}
-    </a>
+      <svg
+        className="w-5 h-5"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
+        />
+      </svg>
+      {count !== null && count > 0 && (
+        <span className="absolute -top-2 -right-2 bg-black text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-mono">
+          {count > 9 ? '9+' : count}
+        </span>
+      )}
+    </button>
   );
 }
 
