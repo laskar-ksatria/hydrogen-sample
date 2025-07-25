@@ -94,7 +94,7 @@ export function ProductItem({
           {product.title}
         </div>
         <div className="flex items-center gap-1 sm:gap-2">
-          <span className="font-semibold text-xs sm:text-base text-gray-900">
+          <span className="font-semibold  text-xs sm:text-base text-gray-900">
             {price ? (
               <span>
                 {currency} {parseFloat(price).toLocaleString()}

@@ -1,8 +1,51 @@
 import {useState} from 'react';
-import {Link, useNavigate, type MetaFunction} from 'react-router';
+import {
+  Link,
+  useNavigate,
+  ActionFunctionArgs,
+  type MetaFunction,
+  useActionData,
+  Form as RemixForm,
+  useNavigation,
+} from 'react-router';
 
 export const meta: MetaFunction = () => {
   return [{title: 'Login | Hydrogen Store'}];
+};
+
+export const action = async (args: ActionFunctionArgs) => {
+  try {
+    const {context, request} = args;
+    const form = await request.formData();
+    const _action = String(form.has('_action') ? form.get('_action') : '');
+    const errors: any = {};
+    if (_action === 'login') {
+      const email = String(form.has('email') ? form.get('email') : '');
+      const password = String(form.has('password') ? form.get('password') : '');
+
+      // VALIDATION
+      if (email.length === 0) {
+        errors.email = 'Email is required';
+      } else {
+        if (!email.includes('@')) {
+          errors.email = 'Invalid email address';
+        }
+      }
+      if (!password) errors.password = 'Password is required';
+      else if (password.length < 8)
+        errors.password = 'Password should be at least 8 characters';
+      else if (!/\d/.test(password))
+        errors.password = 'Password should contain number';
+      if (Object.keys(errors).length > 0) {
+        return {errors};
+      }
+    } else if (_action === 'forgot_password') {
+      return {message: 'hello'};
+    }
+    return {message: 'HELLO'};
+  } catch (error) {
+    return {error};
+  }
 };
 
 export default function Login() {
@@ -12,48 +55,7 @@ export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<{email?: string; password?: string}>({});
   const navigate = useNavigate();
-
-  const validateForm = () => {
-    const newErrors: {email?: string; password?: string} = {};
-
-    if (!email) {
-      newErrors.email = 'Email is required';
-    } else if (!/\S+@\S+\.\S+/.test(email)) {
-      newErrors.email = 'Email is invalid';
-    }
-
-    if (!password) {
-      newErrors.password = 'Password is required';
-    } else if (password.length < 6) {
-      newErrors.password = 'Password must be at least 6 characters';
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!validateForm()) return;
-
-    setIsLoading(true);
-
-    try {
-      // TODO: Implement actual login logic here
-
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      // Redirect to account page after successful login
-      navigate('/account');
-    } catch (error) {
-      console.error('Login error:', error);
-      setErrors({email: 'Invalid email or password'});
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const {state} = useNavigation();
 
   return (
     <div className="min-h-screen bg-white flex items-center justify-center px-4">
@@ -65,7 +67,7 @@ export default function Login() {
         </div>
 
         {/* Login Form */}
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <RemixForm method="POST" action="/account/login" className="space-y-6">
           {/* Email Field */}
           <div>
             <label
@@ -77,6 +79,7 @@ export default function Login() {
             <input
               id="email"
               type="email"
+              name="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className={`
@@ -102,6 +105,7 @@ export default function Login() {
             </label>
             <div className="relative">
               <input
+                name="password"
                 id="password"
                 type={showPassword ? 'text' : 'password'}
                 value={password}
@@ -164,11 +168,11 @@ export default function Login() {
           {/* Remember Me & Forgot Password */}
           <div className="flex items-center justify-between">
             <label className="flex items-center">
-              <input
+              {/* <input
                 type="checkbox"
                 className="w-4 h-4 text-black border-gray-300 rounded focus:ring-black"
               />
-              <span className="ml-2 text-sm text-gray-600">Remember me</span>
+              <span className="ml-2 text-sm text-gray-600">Remember me</span> */}
             </label>
             <Link
               to="/account/recover"
@@ -181,7 +185,8 @@ export default function Login() {
           {/* Submit Button */}
           <button
             type="submit"
-            disabled={isLoading}
+            name="_action"
+            value="login"
             className="w-full bg-black hover:bg-gray-800 disabled:bg-gray-400 text-white font-medium py-4 px-6 rounded-none transition-colors"
           >
             {isLoading ? (
@@ -212,7 +217,7 @@ export default function Login() {
               'Sign In'
             )}
           </button>
-        </form>
+        </RemixForm>
 
         {/* Divider */}
         {/* <div className="my-8">
@@ -290,3 +295,52 @@ export default function Login() {
     </div>
   );
 }
+
+const CART_UPDATE_BUYER_IDENTITY = `#graphql
+mutation CARTUPDATE($token: String!, $cartId: ID!) {
+  cartBuyerIdentityUpdate(
+    cartId: $cartId,
+    buyerIdentity: {
+      customerAccessToken: $token,
+    }
+  ) {
+    cart {
+      id
+      checkoutUrl
+    }
+  }
+}
+`;
+
+// NOTE: https://shopify.dev/docs/api/storefront/latest/mutations/customerrecover
+const CUSTOMER_RECOVER_MUTATION = `#graphql
+  mutation customerRecover(
+    $email: String!,
+    $country: CountryCode,
+    $language: LanguageCode
+  ) @inContext(country: $country, language: $language) {
+    customerRecover(email: $email) {
+      customerUserErrors {
+        code
+        field
+        message
+      }
+    }
+  }
+`;
+
+const M_LOGIN = `
+mutation CUSTOMER_LOGIN($input: CustomerAccessTokenCreateInput!) {
+  customerAccessTokenCreate(input: $input) {
+    customerAccessToken {
+      accessToken
+      expiresAt
+    }
+    customerUserErrors {
+      message
+      code
+      field
+    }
+  }
+}
+`;

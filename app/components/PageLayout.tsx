@@ -54,12 +54,7 @@ export function PageLayout({
         />
       )}
       <main>{children}</main>
-      {/* <div className="h-52"></div> */}
-      {/* <Footer
-        footer={footer}
-        header={header}
-        publicStoreDomain={publicStoreDomain}
-      /> */}
+      {!isLoginPage && !isRegisterPage && <Footer />}
     </Aside.Provider>
   );
 }

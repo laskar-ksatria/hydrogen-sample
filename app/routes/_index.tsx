@@ -81,8 +81,6 @@ export default function Homepage() {
     data.homeContent.metaobject.fields,
   );
 
-  console.log(collectionsDisplay);
-
   return (
     <div className="home">
       <SectionBanner collections={homeContent.bannerCollections} />

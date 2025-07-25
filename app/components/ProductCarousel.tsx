@@ -208,7 +208,8 @@ export function ProductCarousel({
   title = "Men's New Arrivals",
   products = dummyProducts,
   useContainer = false,
-}: ProductCarouselProps & {useContainer?: boolean}) {
+  noViewAll = false,
+}: ProductCarouselProps & {useContainer?: boolean; noViewAll?: boolean}) {
   return (
     <section
       className={`md:pt-12 pt-8 md:pb-8 pb-2 ${useContainer ? '' : 'pl-2 md:pl-1 lg:pl-8'}`}
@@ -217,9 +218,14 @@ export function ProductCarousel({
         {/* Header */}
         <div className="flex font-mono items-center justify-between mb-4">
           <h2 className="text-2xl font-bold text-gray-900">{title}</h2>
-          <Link to="/" className="underline cursor-pointer hover:no-underline">
-            View All
-          </Link>
+          {!noViewAll && (
+            <Link
+              to="/"
+              className="underline cursor-pointer hover:no-underline"
+            >
+              View All
+            </Link>
+          )}
           {/* <button className="swiper-button-prev-custom p-2 rounded-full bg-white border border-gray-200 hover:bg-gray-50 transition-colors">
               <IoChevronBack className="w-5 h-5 text-gray-600" />
             </button>

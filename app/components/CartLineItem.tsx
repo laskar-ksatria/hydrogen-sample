@@ -27,9 +27,9 @@ export function CartLineItem({
 
   return (
     <li key={id} className="border-b border-gray-100 last:border-b-0">
-      <div className="flex font-mono space-x-3 p-4 hover:bg-gray-50 transition-colors duration-200 group">
+      <div className="flex font-mono space-x-3 py-3 hover:bg-gray-50 transition-colors duration-200 rounded-none group">
         {/* Product Image */}
-        <div className="w-20 h-20 bg-gray-200 flex-shrink-0 overflow-hidden">
+        <div className="w-24 h-full bg-gray-200 flex-shrink-0 overflow-hidden">
           {image ? (
             <Image
               alt={title}
@@ -46,8 +46,8 @@ export function CartLineItem({
         </div>
 
         {/* Product Details */}
-        <div className="flex-1 flex flex-col justify-between min-w-0">
-          <div className="space-y-1">
+        <div className="w-full flex flex-col gap-2 py-2">
+          <div className="flex justify-between">
             <Link
               prefetch="intent"
               to={lineItemUrl}
@@ -58,26 +58,24 @@ export function CartLineItem({
               }}
               className="block"
             >
-              <h3 className="text-sm font-medium text-gray-900 line-clamp-2 group-hover:text-black transition-colors duration-200">
+              <h3 className="text-xs line-clamp-1 font-medium max-w-full text-gray-900 truncate group-hover:text-black transition-colors duration-200">
                 {product.title}
               </h3>
             </Link>
-
-            <div className="text-sm text-gray-600">
+            <div className="text-[10px] text-gray-600">
               <ProductPrice price={line?.cost?.totalAmount} />
             </div>
-
-            {/* Selected Options */}
-            {selectedOptions.length > 0 && (
-              <div className="space-y-1">
-                {selectedOptions.map((option) => (
-                  <div key={option.name} className="text-xs text-gray-500">
-                    {option.name}: {option.value}
-                  </div>
-                ))}
-              </div>
-            )}
           </div>
+          {/* Selected Options */}
+          {selectedOptions.length > 0 && (
+            <div className="space-y-1">
+              {selectedOptions.map((option) => (
+                <div key={option.name} className="text-xs text-gray-500">
+                  {option.name}: {option.value}
+                </div>
+              ))}
+            </div>
+          )}
 
           {/* Quantity Controls */}
           <CartLineQuantity line={line} />
@@ -99,7 +97,7 @@ function CartLineQuantity({line}: {line: CartLine}) {
   const nextQuantity = Number((quantity + 1).toFixed(0));
 
   return (
-    <div className="flex items-center justify-between mt-3">
+    <div className="flex items-center justify-between mt-2">
       <div className="flex items-center space-x-2">
         <span className="text-xs text-gray-500">Qty:</span>
         <div className="flex items-center border border-gray-200 rounded-none">
@@ -109,13 +107,13 @@ function CartLineQuantity({line}: {line: CartLine}) {
               disabled={quantity <= 1 || !!isOptimistic}
               name="decrease-quantity"
               value={prevQuantity}
-              className="w-8 h-8 flex items-center justify-center text-gray-500 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-colors duration-200"
+              className="w-6 h-6 flex items-center justify-center text-gray-500 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-colors duration-200 text-xs"
             >
               −
             </button>
           </CartLineUpdateButton>
 
-          <span className="w-10 h-8 flex items-center justify-center text-sm font-medium border-x border-gray-200">
+          <span className="w-8 h-6 flex items-center justify-center text-xs font-medium border-x border-gray-200">
             {quantity}
           </span>
 
@@ -125,7 +123,7 @@ function CartLineQuantity({line}: {line: CartLine}) {
               name="increase-quantity"
               value={nextQuantity}
               disabled={!!isOptimistic}
-              className="w-8 h-8 flex items-center justify-center text-gray-500 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-colors duration-200"
+              className="w-6 h-6 flex items-center justify-center text-gray-500 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-colors duration-200 text-xs"
             >
               +
             </button>

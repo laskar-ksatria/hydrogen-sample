@@ -23,7 +23,6 @@ export function processHomePageData(response: MetaobjectResponse) {
 
   // Extract collections for banner (returns full Collection objects)
   const bannerCollections = getBannerCollections(metaobject.fields);
-  console.log('Banner Collections:', bannerCollections);
 
   // Get brand section data
   const brandBanner = getBrandSectionBanner(metaobject.fields);
