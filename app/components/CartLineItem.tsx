@@ -71,7 +71,11 @@ export function CartLineItem({
             <div className="space-y-1">
               {selectedOptions.map((option) => (
                 <div key={option.name} className="text-xs text-gray-500">
-                  {option.name}: {option.value}
+                  {option.value !== 'Default Title' ? (
+                    <>
+                      {option.name}: {option.value}
+                    </>
+                  ) : null}
                 </div>
               ))}
             </div>

@@ -8,6 +8,13 @@ import {
   Form as RemixForm,
   useNavigation,
 } from 'react-router';
+import {
+  M_FORGOT_PASSWORD_LIMIT_EXCEED,
+  M_INTERNAL_SERVER_ERROR,
+  M_LOGIN_INVALID_EMAIL_OR_PASSWORD,
+} from '~/lib/message';
+
+import {redirect} from '@shopify/remix-oxygen';
 
 export const meta: MetaFunction = () => {
   return [{title: 'Login | Hydrogen Store'}];
@@ -39,6 +46,56 @@ export const action = async (args: ActionFunctionArgs) => {
       if (Object.keys(errors).length > 0) {
         return {errors};
       }
+
+      const {customerAccessTokenCreate, errors: mutationError} =
+        await context.storefront.mutate(M_LOGIN, {
+          variables: {input: {email, password}},
+        });
+
+      // IF ERROR LIMIT OR INTERNAL SERVER ERROR
+      if (!customerAccessTokenCreate) {
+        if (mutationError[0]?.message.includes('Login attempt limit exceeded'))
+          return {error: M_FORGOT_PASSWORD_LIMIT_EXCEED};
+        return {error: M_INTERNAL_SERVER_ERROR};
+      }
+
+      // IF INVALID EMAIL OR PASSWORD
+      if (customerAccessTokenCreate?.customerUserErrors?.length > 0) {
+        const message =
+          customerAccessTokenCreate?.customerUserErrors[0].message;
+        if (message === 'Unidentified customer') {
+          return {error: M_LOGIN_INVALID_EMAIL_OR_PASSWORD};
+        }
+        return {error: M_INTERNAL_SERVER_ERROR};
+      }
+
+      const {customerAccessToken} = customerAccessTokenCreate;
+      console.log(customerAccessToken);
+      await context.session.set('customerAccessToken', customerAccessToken);
+
+      // UPDATE CART IDENTITY ================================================================= //
+      const cartId = await context.cart.getCartId();
+      if (cartId) {
+        const values = await context.storefront.mutate(
+          CART_UPDATE_BUYER_IDENTITY,
+          {
+            variables: {
+              cartId,
+              token: customerAccessToken.accessToken,
+            },
+          },
+        );
+        // Update cart id in cookie
+        const headers = context.cart.setCartId(
+          values?.cartBuyerIdentityUpdate?.cart?.id,
+        );
+        // Update session
+        headers.append('Set-Cookie', await context.session.commit());
+      }
+      // UPDATE CART IDENTITY ================================================================= //
+
+      console.log('ENTER THIS');
+      return redirect('/');
     } else if (_action === 'forgot_password') {
       return {message: 'hello'};
     }

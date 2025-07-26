@@ -31,7 +31,7 @@ export async function loader({request, context, params}: LoaderFunctionArgs) {
   const redirectUrl = `${redirectParam}?${searchParams}`;
 
   if (!code) {
-    return redirect(redirectUrl);
+    return redirect('/');
   }
 
   const result = await cart.updateDiscountCodes([code]);
@@ -40,7 +40,7 @@ export async function loader({request, context, params}: LoaderFunctionArgs) {
   // Using set-cookie on a 303 redirect will not work if the domain origin have port number (:3000)
   // If there is no cart id and a new cart id is created in the progress, it will not be set in the cookie
   // on localhost:3000
-  return redirect(redirectUrl, {
+  return redirect('/', {
     status: 303,
     headers,
   });

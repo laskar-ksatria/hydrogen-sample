@@ -56,7 +56,7 @@ function CartEmpty({
 }) {
   const {close} = useAside();
   return (
-    <div hidden={hidden} className="p-4 max-w-md mx-auto">
+    <div hidden={hidden} className="py-4 max-w-md mx-auto">
       <div className="text-center py-8">
         <div className="mb-6">
           <svg
@@ -87,7 +87,7 @@ function CartEmpty({
           to="/collections"
           onClick={close}
           prefetch="viewport"
-          className="inline-block w-full bg-black text-white py-3 px-6 rounded-none hover:bg-gray-800 transition-colors duration-200 text-sm font-medium uppercase tracking-wide font-mono"
+          className="inline-block w-full mt-4 bg-black text-white py-3 px-6 rounded-none hover:bg-gray-800 transition-colors duration-200 text-sm font-medium uppercase tracking-wide font-mono"
         >
           Continue shopping →
         </Link>
