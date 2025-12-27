@@ -154,6 +154,7 @@ export function Layout({children}: {children?: React.ReactNode}) {
         <link rel="stylesheet" href={tailwindCss}></link>
         <link rel="stylesheet" href={resetStyles}></link>
         <link rel="stylesheet" href={appStyles}></link>
+        <meta name="robots" content="noindex, nofollow"></meta>
         <Meta />
         <Links />
       </head>

@@ -15,6 +15,7 @@ const dummyBlogs = [
     date: 'December 15, 2024',
     excerpt:
       'Discover the latest trends shaping the future of online shopping and digital commerce.',
+    url: '',
   },
   {
     id: 2,
@@ -22,6 +23,7 @@ const dummyBlogs = [
     date: 'December 12, 2024',
     excerpt:
       'Learn how to build a more sustainable wardrobe with eco-friendly fashion choices.',
+    url: '',
   },
   {
     id: 3,
@@ -29,6 +31,7 @@ const dummyBlogs = [
     date: 'December 10, 2024',
     excerpt:
       'Stay warm and stylish this winter with our expert styling tips and outfit ideas.',
+    url: '',
   },
   {
     id: 4,
@@ -36,6 +39,7 @@ const dummyBlogs = [
     date: 'December 8, 2024',
     excerpt:
       'Take a look behind the scenes of our latest photoshoot and collection launch.',
+    url: '',
   },
   {
     id: 5,
@@ -43,6 +47,7 @@ const dummyBlogs = [
     date: 'December 5, 2024',
     excerpt:
       'Read inspiring stories from our customers and how our products fit into their lives.',
+    url: '',
   },
   {
     id: 6,
@@ -50,37 +55,53 @@ const dummyBlogs = [
     date: 'December 1, 2024',
     excerpt:
       'Find the perfect gifts for your loved ones with our curated holiday gift guide.',
+    url: '',
   },
 ];
 
-interface Blog {
+export interface IBlog {
   id: number;
   title: string;
   date: string;
   excerpt: string;
+  image: string;
+  handle: string;
 }
 
 interface BlogListProps {
   useContainer?: boolean;
   title?: string;
-  blogs?: Blog[];
+  blogs: IBlog[];
 }
 
-function BlogCard({blog}: {blog: Blog}) {
+export function BlogCard({blog}: {blog: IBlog}) {
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
+  };
+
   return (
-    <article className="w-[280px] sm:w-[300px] md:w-[320px] lg:w-[350px] group cursor-pointer">
+    <article className="w-[280px] sm:w-[300px] md:w-[320px] lg:w-[350px] group">
       {/* Blog Image */}
       <div className="aspect-[4/3] bg-zinc-200 overflow-hidden mb-4">
-        <div className="w-full h-full bg-zinc-200 flex items-center justify-center group-hover:bg-zinc-300 transition-colors duration-300">
+        <img
+          src={blog.image}
+          alt={blog.title}
+          className="object-cover h-full w-full"
+        />
+        {/* <div className="w-full h-full bg-zinc-200 flex items-center justify-center group-hover:bg-zinc-300 transition-colors duration-300">
           <div className="text-zinc-400 text-sm font-medium">Blog Image</div>
-        </div>
+        </div> */}
       </div>
 
       {/* Blog Content */}
       <div className="space-y-3">
         {/* Date */}
         <div className="text-xs font-medium text-gray-500 uppercase tracking-wider">
-          {blog.date}
+          {formatDate(blog.date)}
         </div>
 
         {/* Title */}
@@ -94,11 +115,11 @@ function BlogCard({blog}: {blog: Blog}) {
         </p>
 
         {/* Read More Link */}
-        <div className="pt-2">
-          <button className="text-sm font-medium text-gray-900 hover:text-gray-700 transition-colors duration-200 border-b border-gray-300 hover:border-gray-500 cursor-pointer">
+        <Link className="pt-2 cursor-pointer" to={`/news/${blog.handle}`}>
+          <span className="text-sm font-medium text-gray-900 hover:text-gray-700 transition-colors duration-200 border-b border-gray-300 hover:border-gray-500 cursor-pointer">
             Read More
-          </button>
-        </div>
+          </span>
+        </Link>
       </div>
     </article>
   );
@@ -126,7 +147,7 @@ function CarouselContainer({
 export function BlogList({
   useContainer = false,
   title = 'Latest Stories',
-  blogs = dummyBlogs,
+  blogs,
 }: BlogListProps) {
   return (
     <section
@@ -143,7 +164,10 @@ export function BlogList({
               Discover insights, trends, and stories from our world
             </p>
           </div>
-          <Link to="/" className="underline cursor-pointer hover:no-underline">
+          <Link
+            to="/news"
+            className="underline cursor-pointer hover:no-underline"
+          >
             View All
           </Link>
         </div>

@@ -10,7 +10,7 @@
 
 html,
 body {
-  /* overflow-x: hidden; */
+  overflow-x: hidden;
   /* max-width: 100vw; */
 }
 
@@ -913,4 +913,9 @@ button.reset:hover:not(:has(> *)) {
   100% {
     transform: translateX(-100%);
   }
+}
+
+h2 {
+  font-size: large;
+  font-weight: 600;
 }

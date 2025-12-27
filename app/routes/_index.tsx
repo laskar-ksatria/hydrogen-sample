@@ -37,15 +37,17 @@ export async function loader(args: LoaderFunctionArgs) {
  * needed to render the page. If it's unavailable, the whole page should 400 or 500 error.
  */
 async function loadCriticalData({context}: LoaderFunctionArgs) {
-  const [{collections}, homeContent] = await Promise.all([
+  const [{collections}, homeContent, blogs] = await Promise.all([
     context.storefront.query(FEATURED_COLLECTION_QUERY),
     context.storefront.query(Q_HOME_PAGE_QUERY),
+    context.storefront.query(Q_BLOGS),
     // Add other queries here, so that they are loaded in parallel
   ]);
 
   return {
     featuredCollection: collections.nodes[0],
     homeContent,
+    blogs,
   };
 }
 
@@ -97,7 +99,17 @@ export default function Homepage() {
       ) : (
         <BrandSection />
       )}
-      <BlogList useContainer={true} />
+      <BlogList
+        blogs={data?.blogs?.blog?.articles?.nodes?.map((item: any) => ({
+          id: item?.id,
+          title: item?.title,
+          date: item?.publishedAt,
+          image: item?.image?.url,
+          excerpt: item?.excerpt,
+          handle: item?.handle,
+        }))}
+        useContainer={true}
+      />
     </div>
   );
 }
@@ -221,6 +233,7 @@ query HOME_PAGE {
             value
             references(first: 10) {
               nodes {
+              
                           ... on Collection {
             id
             title
@@ -379,6 +392,32 @@ query HOME_PAGE {
             }
           }
         }
+      }
+    }
+  }
+}
+`;
+
+export const Q_BLOGS = `#graphql
+query BLOGS {
+  blog(handle: "news") {
+    id
+    articles(first: 10) {
+      nodes {
+        id
+        publishedAt
+        content
+        contentHtml
+        excerpt
+        excerptHtml
+        title
+        image {
+          url
+          id
+          altText
+        }
+        handle
+        
       }
     }
   }

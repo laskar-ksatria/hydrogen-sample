@@ -42,8 +42,8 @@ function BannerSection({collection, index, total}: BannerSectionProps) {
       </div>
 
       {/* Hover overlay with arrow */}
-      <div className="absolute bottom-6 right-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-        <div className="bg-white/20 backdrop-blur-sm rounded-full p-3">
+      <div className="absolute bottom-6 right-6 opacity-20 group-hover:opacity-100 transition-opacity duration-300">
+        <div className="bg-white/10 backdrop-blur-sm rounded-full p-3">
           <svg
             className="w-6 h-6 text-white"
             fill="none"

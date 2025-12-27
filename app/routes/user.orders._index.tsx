@@ -1,4 +1,4 @@
-import {Link} from 'react-router';
+import {Link, useLoaderData} from 'react-router';
 import {Money} from '@shopify/hydrogen';
 import {useState} from 'react';
 import type {CurrencyCode} from '@shopify/hydrogen/storefront-api-types';
@@ -8,6 +8,91 @@ import {
   RiCheckLine,
   RiTimeLine,
 } from 'react-icons/ri';
+import {type LoaderFunctionArgs, redirect} from 'react-router';
+
+const parseOrder = (orders: any) => {
+  return orders?.map((item: any) => ({
+    id: item.id,
+    name: `#${item?.orderNumber}`,
+    number: item?.orderNumber,
+    processedAt: item?.processedAt,
+    totalPrice: {
+      amount: item?.totalPrice?.amount,
+      currencyCode: item?.totalPrice?.currencyCode as CurrencyCode,
+    },
+    financialStatus: item?.financialStatus,
+    fulfillments: {
+      nodes: [
+        {
+          status: item?.fulfillmentStatus,
+        },
+      ],
+    },
+    lineItems: {
+      nodes: item?.lineItems?.nodes?.map((item: any, i: number) => ({
+        id: item?.title + i,
+        title: item?.title,
+        quantity: item?.quantity,
+        price: {
+          amount: item?.originalTotalPrice?.amount,
+          currencyCode: item?.originalTotalPrice?.currencyCode as CurrencyCode,
+        },
+        image: {
+          url: item?.variant?.image?.url,
+          altText: item?.title,
+        },
+        variantTitle: item?.variant?.title,
+      })),
+      // nodes: [
+      //   {
+      //     id: 'gid://shopify/LineItem/2001',
+      //     title: 'Premium Cotton T-Shirt',
+      //     quantity: 2,
+      //     price: {
+      //       amount: '29.99',
+      //       currencyCode: 'USD' as CurrencyCode,
+      //     },
+      //     image: {
+      //       url: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=100&h=100&fit=crop',
+      //       altText: 'Premium Cotton T-Shirt',
+      //     },
+      //     variantTitle: 'Medium / Blue',
+      //   },
+      //   {
+      //     id: 'gid://shopify/LineItem/2002',
+      //     title: 'Denim Jeans',
+      //     quantity: 1,
+      //     price: {
+      //       amount: '89.99',
+      //       currencyCode: 'USD' as CurrencyCode,
+      //     },
+      //     image: {
+      //       url: 'https://images.unsplash.com/photo-1542272604-787c3835535d?w=100&h=100&fit=crop',
+      //       altText: 'Denim Jeans',
+      //     },
+      //     variantTitle: '32 / Dark Blue',
+      //   },
+      // ],
+    },
+  }));
+};
+
+export const loader = async (args: LoaderFunctionArgs) => {
+  const token = await args.context.session.get('customerAccessToken');
+
+  if (!token) return redirect('/account/login');
+  const myOrders = await args.context.storefront.query(Q_ORDERS, {
+    variables: {token: token?.accessToken},
+  });
+
+  return {
+    orders: myOrders?.customer?.orders?.nodes[0],
+    data:
+      myOrders?.customer?.orders?.nodes?.length == 0
+        ? []
+        : parseOrder(myOrders?.customer?.orders?.nodes),
+  };
+};
 
 // Dummy data that matches Shopify's order structure
 const dummyOrders = [
@@ -286,10 +371,10 @@ function OrderCard({order}: {order: (typeof dummyOrders)[0]}) {
       <div className="p-4">
         <div className="flex items-center gap-3 mb-3">
           <div className="flex -space-x-2">
-            {order.lineItems.nodes.slice(0, 3).map((item, index) => (
+            {order?.lineItems?.nodes.map((item, index) => (
               <div
                 key={item.id}
-                className="w-8 h-8 rounded-full border-2 border-white overflow-hidden"
+                className="w-32 h-32 border-2 border-white overflow-hidden"
               >
                 <img
                   src={item.image?.url}
@@ -313,8 +398,6 @@ function OrderCard({order}: {order: (typeof dummyOrders)[0]}) {
             </p>
           </div>
         </div>
-
-        {/* Action Buttons */}
         <div className="flex items-center gap-3">
           <button
             onClick={() => setIsExpanded(!isExpanded)}
@@ -381,12 +464,22 @@ function OrderCard({order}: {order: (typeof dummyOrders)[0]}) {
 }
 
 export default function UserOrders() {
+  const data = useLoaderData<typeof loader>();
+  console.log(data);
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className=" bg-gray-50 py-8 font-mono">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">My Orders</h1>
+          <div className="flex items-center justify-between">
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">My Orders</h1>
+            <Link
+              to="/account/logout"
+              className="hover:underline md:block hidden"
+            >
+              Logout
+            </Link>
+          </div>
           <p className="text-gray-600">
             Track your order history and current shipments
           </p>
@@ -394,14 +487,14 @@ export default function UserOrders() {
 
         {/* Orders List */}
         <div className="space-y-6">
-          {dummyOrders.map((order) => (
+          {data?.data?.map((order: any) => (
             <OrderCard key={order.id} order={order} />
           ))}
         </div>
 
         {/* Empty State (hidden when we have orders) */}
-        {dummyOrders.length === 0 && (
-          <div className="text-center py-12">
+        {data?.data?.length === 0 && (
+          <div className="text-center py-12 min-h-[50vh]">
             <RiAccountCircleLine className="mx-auto h-12 w-12 text-gray-400 mb-4" />
             <h3 className="text-lg font-medium text-gray-900 mb-2">
               No orders yet
@@ -411,7 +504,7 @@ export default function UserOrders() {
             </p>
             <Link
               to="/"
-              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
+              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-black hover:bg-black/80"
             >
               Start Shopping
             </Link>
@@ -421,3 +514,44 @@ export default function UserOrders() {
     </div>
   );
 }
+
+const Q_ORDERS = `#graphql
+query ORDER($token: String!) {
+  customer(customerAccessToken: $token) {
+    orders(first: 100) {
+      nodes {
+        id
+        email
+        orderNumber
+        statusUrl
+      	processedAt
+        totalPrice {
+					currencyCode
+          amount
+        }
+        processedAt
+        financialStatus
+        fulfillmentStatus
+        lineItems(first: 100) {
+          nodes {
+            originalTotalPrice {
+              currencyCode
+              amount
+            }
+            title
+            quantity
+           	variant {
+                            image {
+								url
+                altText
+              }
+            id
+            title
+          }
+          }
+        }
+      }
+    }
+  }
+}
+`;

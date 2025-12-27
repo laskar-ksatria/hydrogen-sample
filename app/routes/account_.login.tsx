@@ -15,9 +15,16 @@ import {
 } from '~/lib/message';
 
 import {redirect} from '@shopify/remix-oxygen';
+import {LoaderFunctionArgs} from 'react-router';
 
 export const meta: MetaFunction = () => {
   return [{title: 'Login | Hydrogen Store'}];
+};
+
+export const loader = async (args: LoaderFunctionArgs) => {
+  const token = await args.context.session.get('customerAccessToken');
+  if (token) return redirect('/user/orders');
+  return {};
 };
 
 export const action = async (args: ActionFunctionArgs) => {
@@ -68,11 +75,11 @@ export const action = async (args: ActionFunctionArgs) => {
         }
         return {error: M_INTERNAL_SERVER_ERROR};
       }
-
       const {customerAccessToken} = customerAccessTokenCreate;
-      console.log(customerAccessToken);
-      await context.session.set('customerAccessToken', customerAccessToken);
-
+      await context.session.set(
+        'customerAccessToken',
+        customerAccessToken.accessToken,
+      );
       // UPDATE CART IDENTITY ================================================================= //
       const cartId = await context.cart.getCartId();
       if (cartId) {
@@ -93,9 +100,11 @@ export const action = async (args: ActionFunctionArgs) => {
         headers.append('Set-Cookie', await context.session.commit());
       }
       // UPDATE CART IDENTITY ================================================================= //
-
-      console.log('ENTER THIS');
-      return redirect('/');
+      return redirect('/user/orders', {
+        headers: {
+          'Set-Cookie': await context.session.commit(),
+        },
+      });
     } else if (_action === 'forgot_password') {
       return {message: 'hello'};
     }

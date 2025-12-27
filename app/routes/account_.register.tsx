@@ -1,8 +1,134 @@
 import {useState} from 'react';
-import {Link, useNavigate, type MetaFunction} from 'react-router';
+import {ActionFunctionArgs} from 'react-router';
+import {redirect} from '@shopify/remix-oxygen';
+import {
+  Link,
+  useNavigate,
+  type MetaFunction,
+  Form as RemixForm,
+} from 'react-router';
+import {RegisterAttributes} from '~/lib/input-config';
+import {
+  M_FORGOT_PASSWORD_LIMIT_EXCEED,
+  M_INTERNAL_SERVER_ERROR,
+} from '~/lib/message';
 
 export const meta: MetaFunction = () => {
   return [{title: 'Create Account | Hydrogen Store'}];
+};
+
+export const action = async ({request, context}: ActionFunctionArgs) => {
+  try {
+    if (request.method !== 'POST') {
+      return {
+        error: 'Method not allowed',
+      };
+    }
+    const errors: any = {};
+    const {storefront, session, cart} = context;
+    const form = await request.formData();
+    const email = String(form.has('email') ? form.get('email') : '');
+    const password = form.has('password') ? String(form.get('password')) : null;
+    const firstName = form.has('firstName')
+      ? String(form.get('firstName'))
+      : null;
+
+    const lastName = form.has('lastName') ? String(form.get('lastName')) : null;
+
+    // const newsletter = form.has('newsletter')
+    //   ? String(form.get('newsletter'))
+    //   : null;
+
+    // VALIDATIONS
+    if (email.length === 0)
+      errors[`${RegisterAttributes.email.name}`] = 'Email is required';
+    else if (!email.includes('@'))
+      errors[`${RegisterAttributes.email.name}`] = 'Invalid email address';
+
+    if (!password)
+      errors[`${RegisterAttributes.password.name}`] = 'Password is required';
+    else if (!/\d/.test(password))
+      errors[`${RegisterAttributes.password.name}`] =
+        'Password should contain number';
+    if (!firstName) errors.firstName = 'First name is required';
+    if (!lastName) errors.lastName = 'Last name is required';
+    if (Object.keys(errors).length > 0) {
+      return {errors};
+    }
+    // VALIDATIONS
+
+    const {customerCreate, errors: registerErrors} = await storefront.mutate(
+      M_REGISTER,
+      {
+        variables: {
+          email,
+          password,
+          firstName,
+          lastName,
+          // acceptsMarketing: newsletter === 'on' ? true : false,
+        },
+      },
+    );
+
+    if (registerErrors?.length > 0) {
+      if (registerErrors[0]?.message.includes('Limit exceeded'))
+        return {error: M_FORGOT_PASSWORD_LIMIT_EXCEED};
+      return {error: M_INTERNAL_SERVER_ERROR};
+    }
+    if (customerCreate?.customerUserErrors.length > 0) {
+      return {
+        error:
+          customerCreate.customerUserErrors[0].message ||
+          M_INTERNAL_SERVER_ERROR,
+      };
+    }
+    const responseLogin = await storefront.mutate(M_LOGIN, {
+      variables: {
+        input: {
+          email,
+          password,
+        },
+      },
+    });
+    if (!responseLogin?.customerAccessTokenCreate) {
+      return {error: M_INTERNAL_SERVER_ERROR, loginError: true};
+    }
+    context.session.set(
+      'customerAccessToken',
+      responseLogin?.customerAccessTokenCreate?.customerAccessToken,
+    );
+
+    // UPDATE CART IDENTITY ================================================================= //
+    const cartId = await context.cart.getCartId();
+
+    if (cartId) {
+      const values = await context.storefront.mutate(
+        CART_UPDATE_BUYER_IDENTITY,
+        {
+          variables: {
+            cartId,
+            token:
+              responseLogin?.customerAccessTokenCreate?.customerAccessToken
+                .accessToken,
+          },
+        },
+      );
+      // Update cart id in cookie
+      const headers = context.cart.setCartId(
+        values?.cartBuyerIdentityUpdate?.cart?.id,
+      );
+      // Update session
+      headers.append('Set-Cookie', await context.session.commit());
+    }
+    // UPDATE CART IDENTITY ================================================================= //
+    return redirect('/account/orders', {
+      headers: {
+        'Set-Cookie': await session.commit(),
+      },
+    });
+  } catch (error) {
+    return {error: 'Internal server error'};
+  }
 };
 
 export default function Register() {
@@ -18,6 +144,12 @@ export default function Register() {
   const [errors, setErrors] = useState<{[key: string]: string}>({});
   const [acceptTerms, setAcceptTerms] = useState(false);
   const navigate = useNavigate();
+
+  // INPUT
+  const [email, setEmail] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [password, setPassword] = useState('');
 
   const validateForm = () => {
     const newErrors: {[key: string]: string} = {};
@@ -65,7 +197,6 @@ export default function Register() {
 
     try {
       // TODO: Implement actual registration logic here
-      console.log('Registration attempt:', formData);
 
       // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -98,8 +229,11 @@ export default function Register() {
         </div>
 
         {/* Registration Form */}
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Name Fields */}
+        <RemixForm
+          method="POST"
+          action="/account/register"
+          className="space-y-6"
+        >
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label
@@ -109,10 +243,10 @@ export default function Register() {
                 First Name *
               </label>
               <input
-                id="firstName"
+                name="firstName"
                 type="text"
-                value={formData.firstName}
-                onChange={(e) => handleInputChange('firstName', e.target.value)}
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
                 className={`
                   w-full px-4 py-3 border rounded-none text-black placeholder-gray-500
                   focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent
@@ -134,10 +268,10 @@ export default function Register() {
                 Last Name *
               </label>
               <input
-                id="lastName"
+                name="lastName"
                 type="text"
-                value={formData.lastName}
-                onChange={(e) => handleInputChange('lastName', e.target.value)}
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
                 className={`
                   w-full px-4 py-3 border rounded-none text-black placeholder-gray-500
                   focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent
@@ -152,7 +286,6 @@ export default function Register() {
             </div>
           </div>
 
-          {/* Email Field */}
           <div>
             <label
               htmlFor="email"
@@ -161,10 +294,12 @@ export default function Register() {
               Email Address *
             </label>
             <input
-              id="email"
+              name="email"
               type="email"
-              value={formData.email}
-              onChange={(e) => handleInputChange('email', e.target.value)}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              // value={formData.email}
+              // onChange={(e) => handleInputChange('email', e.target.value)}
               className={`
                 w-full px-4 py-3 border rounded-none text-black placeholder-gray-500
                 focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent
@@ -178,7 +313,6 @@ export default function Register() {
             )}
           </div>
 
-          {/* Password Field */}
           <div>
             <label
               htmlFor="password"
@@ -188,10 +322,10 @@ export default function Register() {
             </label>
             <div className="relative">
               <input
-                id="password"
+                name="password"
                 type={showPassword ? 'text' : 'password'}
-                value={formData.password}
-                onChange={(e) => handleInputChange('password', e.target.value)}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 className={`
                   w-full px-4 py-3 border rounded-none text-black placeholder-gray-500 pr-12
                   focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent
@@ -246,80 +380,6 @@ export default function Register() {
               <p className="mt-1 text-xs text-red-500">{errors.password}</p>
             )}
           </div>
-
-          {/* Confirm Password Field */}
-          {/* <div>
-            <label
-              htmlFor="confirmPassword"
-              className="block text-sm font-medium text-black mb-2"
-            >
-              Confirm Password *
-            </label>
-            <div className="relative">
-              <input
-                id="confirmPassword"
-                type={showConfirmPassword ? 'text' : 'password'}
-                value={formData.confirmPassword}
-                onChange={(e) =>
-                  handleInputChange('confirmPassword', e.target.value)
-                }
-                className={`
-                  w-full px-4 py-3 border rounded-lg text-black placeholder-gray-500 pr-12
-                  focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent
-                  ${errors.confirmPassword ? 'border-red-500' : 'border-gray-300'}
-                `}
-                placeholder="Confirm your password"
-                required
-              />
-              <button
-                type="button"
-                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-black"
-              >
-                {showConfirmPassword ? (
-                  <svg
-                    className="w-5 h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21"
-                    />
-                  </svg>
-                ) : (
-                  <svg
-                    className="w-5 h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                    />
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                    />
-                  </svg>
-                )}
-              </button>
-            </div>
-            {errors.confirmPassword && (
-              <p className="mt-1 text-sm text-red-500">
-                {errors.confirmPassword}
-              </p>
-            )}
-          </div> */}
-
           {/* Terms and Conditions */}
           <div>
             <label className="flex items-start">
@@ -332,14 +392,14 @@ export default function Register() {
               <span className="ml-3 text-sm text-gray-600">
                 I agree to the{' '}
                 <Link
-                  to="/policies/terms-of-service"
+                  to="/terms-conditions"
                   className="text-blue-600 hover:underline"
                 >
                   Terms of Service
                 </Link>{' '}
                 and{' '}
                 <Link
-                  to="/policies/privacy-policy"
+                  to="/privacy-policy"
                   className="text-blue-600 hover:underline"
                 >
                   Privacy Policy
@@ -354,7 +414,7 @@ export default function Register() {
           {/* Submit Button */}
           <button
             type="submit"
-            disabled={isLoading}
+            disabled={!acceptTerms}
             className="w-full bg-black hover:bg-gray-800 disabled:bg-gray-400 text-white font-medium py-4 px-6 rounded-none transition-colors"
           >
             {isLoading ? (
@@ -385,7 +445,7 @@ export default function Register() {
               'Create Account'
             )}
           </button>
-        </form>
+        </RemixForm>
 
         {/* Login Link */}
         <div className="mt-6">
@@ -413,3 +473,50 @@ export default function Register() {
     </div>
   );
 }
+
+const M_REGISTER = `#graphql
+  mutation REGISTER($email: String!, $password: String!, $firstName: String, $lastName: String, $phone: String) {
+    customerCreate(input: {email: $email, password: $password, firstName: $firstName, lastName:$lastName, phone:$phone}) {
+      customer {
+        id
+      }
+      customerUserErrors {
+        code
+        message
+        field
+      }
+    }
+  }
+  `;
+
+const M_LOGIN = `#graphql
+mutation CUSTOMER_LOGIN($input: CustomerAccessTokenCreateInput!) {
+  customerAccessTokenCreate(input: $input) {
+    customerAccessToken {
+      accessToken
+      expiresAt
+    }
+    customerUserErrors {
+      message
+      code
+      field
+    }
+  }
+}
+`;
+
+const CART_UPDATE_BUYER_IDENTITY = `#graphql
+mutation CARTUPDATE($token: String!, $cartId: ID!) {
+  cartBuyerIdentityUpdate(
+    cartId: $cartId,
+    buyerIdentity: {
+      customerAccessToken: $token,
+    }
+  ) {
+    cart {
+      id
+      checkoutUrl
+    }
+  }
+}
+`;

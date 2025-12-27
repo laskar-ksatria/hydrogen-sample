@@ -3,7 +3,7 @@ import {type MetaFunction} from 'react-router';
 
 export const meta: MetaFunction = () => {
   return [
-    {title: 'Privacy Policy | Patagonia'},
+    {title: 'Terms & Conditions | Patagonia'},
     {
       name: 'description',
       content:
@@ -14,8 +14,6 @@ export const meta: MetaFunction = () => {
 
 export const loader = async (args: LoaderFunctionArgs) => {
   const response = await args.context.storefront.query(Q_PRIVACY);
-
-  console.log(response?.page);
 
   return {
     data: response?.page,
@@ -67,7 +65,7 @@ export default function PrivacyPolicy() {
 
 export const Q_PRIVACY = `#graphql
 query PRIVACY {
-  page(handle: "privacy-policy") {
+  page(handle: "terms-conditions") {
     id
     title
     seo {

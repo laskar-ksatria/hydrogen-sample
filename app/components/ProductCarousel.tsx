@@ -10,7 +10,7 @@ import {ProductItem} from '~/components/ProductItem';
 import type {Product as ProductShopify} from '~/types/metaobject';
 import {useState} from 'react';
 
-interface Product {
+export interface IProduct {
   id: string;
   vendor: string;
   name: string;
@@ -22,10 +22,10 @@ interface Product {
 
 interface ProductCarouselProps {
   title?: string;
-  products?: Product[] | ProductShopify[];
+  products?: IProduct[] | ProductShopify[];
 }
 
-const dummyProducts: Product[] = [
+const dummyProducts: IProduct[] = [
   {
     id: '1',
     vendor: 'A. SOCIETY',
@@ -116,7 +116,7 @@ const dummyProducts: Product[] = [
   },
 ];
 
-function ProductCard({product}: {product: Product | ProductShopify}) {
+export function ProductCard({product}: {product: IProduct | ProductShopify}) {
   const [isHovered, setIsHovered] = useState(false);
 
   // If product has Shopify fields, render with ProductItem
@@ -126,7 +126,7 @@ function ProductCard({product}: {product: Product | ProductShopify}) {
   }
 
   // For dummy products, add hover functionality
-  const dummyProduct = product as Product;
+  const dummyProduct = product as IProduct;
 
   // Fallback to dummy product card with consistent styling
   return (
@@ -149,7 +149,6 @@ function ProductCard({product}: {product: Product | ProductShopify}) {
             }`}
           />
         )}
-
         {/* Secondary Image (Hover) */}
         {dummyProduct.secondaryImage && (
           <img
@@ -160,7 +159,7 @@ function ProductCard({product}: {product: Product | ProductShopify}) {
             }`}
           />
         )}
-
+        sdsdsds
         {/* Fallback if no images */}
         {!dummyProduct.primaryImage && !dummyProduct.secondaryImage && (
           <div className="w-full h-full bg-zinc-200"></div>

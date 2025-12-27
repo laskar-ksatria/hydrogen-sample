@@ -435,7 +435,7 @@ export function CollectionFilters({
       )}
 
       {/* Active Filters Display */}
-      {getActiveFiltersCount() > 0 && (
+      {/* {getActiveFiltersCount() > 0 && (
         <div className="mb-4 p-3 bg-gray-50 rounded-md">
           <div className="flex flex-wrap gap-2">
             {Object.entries(activeFilters).map(([filterId, values]) =>
@@ -511,7 +511,7 @@ export function CollectionFilters({
             )}
           </div>
         </div>
-      )}
+      )} */}
     </div>
   );
 }

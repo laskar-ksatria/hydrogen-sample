@@ -51,7 +51,7 @@ export function ProductItem({
     >
       {/* Product Image Container */}
       <div
-        className="h-[280px] sm:h-[300px] md:h-[330px] lg:h-[358px] bg-zinc-200 mb-4 overflow-hidden relative"
+        className="h-[280px] sm:h-[300px] bg-zinc-200 mb-4 overflow-hidden relative"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
@@ -88,7 +88,7 @@ export function ProductItem({
       {/* Product Info */}
       <div className="space-y-1 sm:space-y-2">
         <div className="font-bold text-xs sm:text-sm uppercase tracking-wide text-gray-900">
-          {(product as any).vendor || 'Brand'}
+          {(product as any).vendor || ''}
         </div>
         <div className="text-xs sm:text-sm text-gray-700 leading-tight">
           {product.title}

@@ -53,7 +53,8 @@ export function PageLayout({
           publicStoreDomain={publicStoreDomain}
         />
       )}
-      <main>{children}</main>
+      {children}
+      {/* <main>{children}</main> */}
       {!isLoginPage && !isRegisterPage && <Footer />}
     </Aside.Provider>
   );

@@ -32,7 +32,7 @@ export default function ProductVariant({
                 <span className="text-base font-medium text-black">
                   {option.name}
                 </span>
-                <button className="flex items-center text-sm text-blue-600 hover:underline">
+                {/* <button className="flex items-center text-sm text-blue-600 hover:underline">
                   <svg
                     className="w-4 h-4 mr-1"
                     fill="none"
@@ -47,7 +47,7 @@ export default function ProductVariant({
                     />
                   </svg>
                   Size Guide ›
-                </button>
+                </button> */}
               </div>
               {/* Custom Size Grid */}
               <div className="grid grid-cols-3 gap-3">
@@ -117,14 +117,14 @@ export default function ProductVariant({
             : []
         }
       >
-        <span className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-medium py-4 px-6 rounded-lg transition-colors mt-6 block text-center">
+        <span className="w-full bg-blue-600 uppercase hover:bg-blue-700 disabled:bg-gray-400 text-white font-medium py-4 px-6 transition-colors mt-6 block text-center">
           {selectedVariant?.availableForSale ? 'Add to Bag' : 'Sold out'}
         </span>
       </AddToCartButton>
 
       {/* Buy Now Button */}
       <button
-        className="w-full bg-black hover:bg-gray-800 disabled:bg-gray-400 text-white font-medium py-4 px-6 rounded-lg transition-colors mt-0"
+        className="w-full bg-black hover:bg-gray-800 upp disabled:bg-gray-400 text-white font-medium py-4 px-6 transition-colors mt-0"
         disabled={!selectedVariant || !selectedVariant.availableForSale}
         onClick={() => {
           // Add buy now logic here - typically redirects to checkout

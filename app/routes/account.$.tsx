@@ -2,6 +2,8 @@ import {redirect, type LoaderFunctionArgs} from '@shopify/remix-oxygen';
 
 // fallback wild card for all unauthenticated routes in account section
 export async function loader({context, request}: LoaderFunctionArgs) {
+  console.log('HELLO');
+
   const {session, storefront} = context;
 
   const {pathname} = new URL(request.url);

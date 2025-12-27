@@ -149,8 +149,8 @@ export default function SearchPage() {
               {({articles, pages, products, term}) => (
                 <div className="space-y-12">
                   <SearchResults.Products products={products} term={term} />
-                  <SearchResults.Pages pages={pages} term={term} />
-                  <SearchResults.Articles articles={articles} term={term} />
+                  {/* <SearchResults.Pages pages={pages} term={term} /> */}
+                  {/* <SearchResults.Articles articles={articles} term={term} /> */}
                 </div>
               )}
             </SearchResults>

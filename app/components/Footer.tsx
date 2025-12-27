@@ -57,7 +57,7 @@ export function Footer() {
           </div>
 
           {/* Quick Links */}
-          <div className="space-y-4">
+          {/* <div className="space-y-4">
             <h3 className="text-sm font-medium text-gray-900 uppercase tracking-wide">
               Quick Links
             </h3>
@@ -103,10 +103,10 @@ export function Footer() {
                 </Link>
               </li>
             </ul>
-          </div>
+          </div> */}
 
           {/* Customer Service */}
-          <div className="space-y-4">
+          {/* <div className="space-y-4">
             <h3 className="text-sm font-medium text-gray-900 uppercase tracking-wide">
               Customer Service
             </h3>
@@ -152,7 +152,7 @@ export function Footer() {
                 </Link>
               </li>
             </ul>
-          </div>
+          </div> */}
 
           {/* Legal */}
           <div className="space-y-4">
@@ -162,7 +162,7 @@ export function Footer() {
             <ul className="space-y-2">
               <li>
                 <Link
-                  to="/policies/privacy-policy"
+                  to="/privacy-policy"
                   className="text-sm text-gray-600 hover:text-gray-900 transition-colors duration-200"
                 >
                   Privacy Policy
@@ -170,13 +170,13 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  to="/policies/terms-of-service"
+                  to="/terms-conditions"
                   className="text-sm text-gray-600 hover:text-gray-900 transition-colors duration-200"
                 >
                   Terms of Service
                 </Link>
               </li>
-              <li>
+              {/* <li>
                 <Link
                   to="/policies/refund-policy"
                   className="text-sm text-gray-600 hover:text-gray-900 transition-colors duration-200"
@@ -199,7 +199,7 @@ export function Footer() {
                 >
                   About Us
                 </Link>
-              </li>
+              </li> */}
             </ul>
           </div>
         </div>
@@ -208,23 +208,23 @@ export function Footer() {
         <div className="border-t border-gray-200 mt-12 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <div className="text-sm text-gray-500">
-              © 2024 LOGO. All rights reserved.
+              © 2025 LOGO. All rights reserved.
             </div>
             <div className="flex space-x-6">
               <Link
-                to="/pages/accessibility"
+                to="/"
                 className="text-sm text-gray-500 hover:text-gray-900 transition-colors duration-200"
               >
                 Accessibility
               </Link>
               <Link
-                to="/pages/sitemap"
+                to="/"
                 className="text-sm text-gray-500 hover:text-gray-900 transition-colors duration-200"
               >
                 Sitemap
               </Link>
               <Link
-                to="/pages/careers"
+                to="/"
                 className="text-sm text-gray-500 hover:text-gray-900 transition-colors duration-200"
               >
                 Careers
